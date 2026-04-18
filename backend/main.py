@@ -175,7 +175,7 @@ def get_all_complaints(authorization: str | None = Header(default=None)):
         current_user = _require_authenticated_user(authorization)
         collection = get_complaints_collection()
         complaints = list(
-            collection.find({"user_id": current_user["id"]}).sort("created_at", -1)
+            collection.find({"user_id": current_user["id"]}).sort("created_at", 1)
         )
 
         complaints_converted = convert_objectid_in_list(complaints)
