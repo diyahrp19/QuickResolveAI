@@ -108,17 +108,6 @@ export function Sidebar() {
           );
         })}
       </nav>
-
-      {!collapsed && (
-        <div className="p-3 pt-0">
-          <div className="rounded-2xl glass-card border border-sidebar-border/80 px-3 py-3 shadow-soft">
-            <p className="text-xs font-medium text-sidebar-foreground">AI assistant</p>
-            <p className="mt-1 text-[11px] leading-4 text-muted-foreground">
-              Classification engine active and monitoring incoming complaints.
-            </p>
-          </div>
-        </div>
-      )}
     </aside>
   );
 }

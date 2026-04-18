@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/layout/AppShell";
 import { StatCard } from "@/components/StatCard";
 import { useComplaints } from "@/lib/complaints-store";
-import { AlertTriangle, CheckCircle2, Clock, Inbox, Lightbulb, Sparkles, Zap } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Clock, Inbox } from "lucide-react";
 import {
   ResponsiveContainer,
   PieChart,
@@ -16,7 +16,6 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
-import type { Complaint } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -58,7 +57,6 @@ function Dashboard() {
     name,
     value: complaints.filter((c) => c.status === name).length,
   }));
-  const insights = buildInsights(complaints);
 
   return (
     <AppShell>
@@ -95,94 +93,88 @@ function Dashboard() {
           <StatCard label="Pending" value={pending} delta="In queue" icon={Clock} tone="warning" />
         </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-4">
-          <div className="xl:col-span-9 grid grid-cols-1 lg:grid-cols-3 gap-4">
-            <ChartCard title="Complaint Categories" subtitle="Distribution by type">
-              <ResponsiveContainer width="100%" height={260}>
-                <PieChart>
-                  <Pie
-                    data={byCategory}
-                    dataKey="value"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={55}
-                    outerRadius={90}
-                    paddingAngle={3}
-                    animationDuration={850}
-                    animationBegin={80}
-                  >
-                    {byCategory.map((_, i) => (
-                      <Cell key={i} fill={COLORS[i]} />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    contentStyle={tooltipStyle}
-                    cursor={{ fill: "var(--color-secondary)", opacity: 0.25 }}
-                  />
-                  <Legend iconType="circle" />
-                </PieChart>
-              </ResponsiveContainer>
-            </ChartCard>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <ChartCard title="Complaint Categories" subtitle="Distribution by type">
+            <ResponsiveContainer width="100%" height={260}>
+              <PieChart>
+                <Pie
+                  data={byCategory}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={55}
+                  outerRadius={90}
+                  paddingAngle={3}
+                  animationDuration={850}
+                  animationBegin={80}
+                >
+                  {byCategory.map((_, i) => (
+                    <Cell key={i} fill={COLORS[i]} />
+                  ))}
+                </Pie>
+                <Tooltip
+                  contentStyle={tooltipStyle}
+                  cursor={{ fill: "var(--color-secondary)", opacity: 0.25 }}
+                />
+                <Legend iconType="circle" />
+              </PieChart>
+            </ResponsiveContainer>
+          </ChartCard>
 
-            <ChartCard title="Priority Distribution" subtitle="Urgency breakdown">
-              <ResponsiveContainer width="100%" height={260}>
-                <BarChart data={byPriority}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
-                  <XAxis dataKey="name" stroke="var(--color-muted-foreground)" fontSize={12} />
-                  <YAxis stroke="var(--color-muted-foreground)" fontSize={12} />
-                  <Tooltip
-                    contentStyle={tooltipStyle}
-                    cursor={{ fill: "var(--color-secondary)", opacity: 0.24 }}
-                  />
-                  <Bar dataKey="value" radius={[10, 10, 0, 0]} animationDuration={900}>
-                    {byPriority.map((d, i) => (
-                      <Cell
-                        key={i}
-                        fill={
-                          d.name === "High"
-                            ? "var(--color-destructive)"
-                            : d.name === "Medium"
-                              ? "var(--color-warning)"
-                              : "var(--color-success)"
-                        }
-                      />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </ChartCard>
+          <ChartCard title="Priority Distribution" subtitle="Urgency breakdown">
+            <ResponsiveContainer width="100%" height={260}>
+              <BarChart data={byPriority}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+                <XAxis dataKey="name" stroke="var(--color-muted-foreground)" fontSize={12} />
+                <YAxis stroke="var(--color-muted-foreground)" fontSize={12} />
+                <Tooltip
+                  contentStyle={tooltipStyle}
+                  cursor={{ fill: "var(--color-secondary)", opacity: 0.24 }}
+                />
+                <Bar dataKey="value" radius={[10, 10, 0, 0]} animationDuration={900}>
+                  {byPriority.map((d, i) => (
+                    <Cell
+                      key={i}
+                      fill={
+                        d.name === "High"
+                          ? "var(--color-destructive)"
+                          : d.name === "Medium"
+                            ? "var(--color-warning)"
+                            : "var(--color-success)"
+                      }
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </ChartCard>
 
-            <ChartCard title="Complaint Status" subtitle="Workflow stages">
-              <ResponsiveContainer width="100%" height={260}>
-                <PieChart>
-                  <Pie
-                    data={byStatus}
-                    dataKey="value"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={90}
-                    animationDuration={820}
-                    animationBegin={120}
-                  >
-                    {byStatus.map((_, i) => (
-                      <Cell key={i} fill={COLORS[i]} />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    contentStyle={tooltipStyle}
-                    cursor={{ fill: "var(--color-secondary)", opacity: 0.24 }}
-                  />
-                  <Legend iconType="circle" />
-                </PieChart>
-              </ResponsiveContainer>
-            </ChartCard>
-          </div>
-
-          <div className="xl:col-span-3">
-            <InsightCard insights={insights} />
-          </div>
+          <ChartCard title="Complaint Status" subtitle="Workflow stages">
+            <ResponsiveContainer width="100%" height={260}>
+              <PieChart>
+                <Pie
+                  data={byStatus}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={90}
+                  animationDuration={820}
+                  animationBegin={120}
+                >
+                  {byStatus.map((_, i) => (
+                    <Cell key={i} fill={COLORS[i]} />
+                  ))}
+                </Pie>
+                <Tooltip
+                  contentStyle={tooltipStyle}
+                  cursor={{ fill: "var(--color-secondary)", opacity: 0.24 }}
+                />
+                <Legend iconType="circle" />
+              </PieChart>
+            </ResponsiveContainer>
+          </ChartCard>
         </div>
 
         <div className="rounded-3xl border border-border/80 glass-card p-6 shadow-soft">
@@ -190,13 +182,13 @@ function Dashboard() {
             Recent Complaints
           </h3>
           <div className="space-y-3">
-            {complaints.slice(0, 5).map((c) => (
+            {complaints.slice(0, 5).map((c, index) => (
               <div
                 key={c.id}
                 className="flex items-center gap-4 rounded-2xl border border-transparent p-3 hover:bg-secondary/55 hover:border-border/70 transition-all hover-lift"
               >
                 <div className="h-9 w-9 rounded-xl bg-linear-to-br from-primary/20 to-primary/8 text-primary flex items-center justify-center text-xs font-mono font-semibold surface-ring">
-                  {c.id.slice(-3)}
+                  {index + 1}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold truncate">{c.text}</p>
@@ -223,88 +215,6 @@ const tooltipStyle = {
   backdropFilter: "blur(10px)",
   boxShadow: "var(--shadow-md)",
 } as const;
-
-function InsightCard({ insights }: { insights: string[] }) {
-  return (
-    <div className="rounded-3xl border border-border/80 glass-card p-5 shadow-soft h-full">
-      <div className="flex items-center gap-2">
-        <div className="h-9 w-9 rounded-xl bg-linear-to-br from-primary/25 to-primary/8 text-primary flex items-center justify-center surface-ring">
-          <Sparkles className="h-4 w-4" />
-        </div>
-        <div>
-          <h3 className="font-display text-base font-semibold tracking-tight">AI Insights</h3>
-          <p className="text-xs text-muted-foreground">Real-time trend intelligence</p>
-        </div>
-      </div>
-
-      <div className="mt-4 space-y-3">
-        {insights.map((insight, index) => (
-          <div
-            key={insight}
-            className="rounded-2xl border border-border/70 bg-card/45 p-3 surface-ring hover:bg-card/70 transition-colors"
-          >
-            <p className="text-sm leading-relaxed text-foreground flex items-start gap-2">
-              <span className="mt-0.5 text-primary">
-                {index === 0 ? (
-                  <TrendingChip icon={Zap} />
-                ) : index === 1 ? (
-                  <TrendingChip icon={AlertTriangle} />
-                ) : (
-                  <TrendingChip icon={Lightbulb} />
-                )}
-              </span>
-              <span>{insight}</span>
-            </p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function TrendingChip({ icon: Icon }: { icon: typeof Lightbulb }) {
-  return (
-    <span className="inline-flex h-5 w-5 items-center justify-center rounded-lg bg-primary/12 text-primary">
-      <Icon className="h-3.5 w-3.5" />
-    </span>
-  );
-}
-
-function buildInsights(complaints: Complaint[]) {
-  const now = Date.now();
-  const week = 7 * 24 * 60 * 60 * 1000;
-
-  const thisWeek = complaints.filter((c) => now - new Date(c.createdAt).getTime() <= week);
-  const prevWeek = complaints.filter((c) => {
-    const age = now - new Date(c.createdAt).getTime();
-    return age > week && age <= week * 2;
-  });
-
-  const pkgThis = thisWeek.filter((c) => c.category === "Packaging Issue").length;
-  const pkgPrev = prevWeek.filter((c) => c.category === "Packaging Issue").length;
-  const pkgDelta =
-    pkgPrev > 0 ? Math.round(((pkgThis - pkgPrev) / pkgPrev) * 100) : pkgThis > 0 ? 100 : 0;
-
-  const highTopics = complaints.filter((c) => c.priority === "High");
-  const deliveryHeavy = highTopics.filter((c) => {
-    const txt = c.text.toLowerCase();
-    return txt.includes("delivery") || txt.includes("delay") || txt.includes("shipping");
-  }).length;
-
-  const productIssues = complaints.filter((c) => c.category === "Product Issue").length;
-  const productResolved = complaints.filter(
-    (c) => c.category === "Product Issue" && c.status === "Resolved",
-  ).length;
-  const productRate = productIssues ? Math.round((productResolved / productIssues) * 100) : 0;
-
-  return [
-    `Packaging complaints changed by ${pkgDelta}% this week compared to last week.`,
-    highTopics.length
-      ? `${deliveryHeavy} of ${highTopics.length} high-priority issues are linked to delivery delays or shipping concerns.`
-      : "No high-priority complaints are currently open, indicating stable urgent-issue flow.",
-    `Product defect complaints currently show a ${productRate}% resolution rate, highlighting active progress in electronics workflows.`,
-  ];
-}
 
 function ChartCard({
   title,
