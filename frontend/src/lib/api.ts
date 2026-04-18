@@ -67,6 +67,10 @@ export const api = {
         method: "PATCH",
         body: JSON.stringify(payload),
       }),
+    remove: (id: string) =>
+      request<ComplaintApiResponse>(`/complaint/${id}`, {
+        method: "DELETE",
+      }),
   },
   dashboard: {
     stats: () => request<DashboardStats>("/dashboard"),

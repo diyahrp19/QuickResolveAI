@@ -152,6 +152,36 @@ def update_complaint_status(complaint_id: str, request: ComplaintUpdateRequest):
         )
 
 
+@app.delete("/complaint/{complaint_id}", response_model=ComplaintResponse, tags=["Complaints"])
+def delete_complaint(complaint_id: str):
+    """Delete a complaint from the database."""
+    try:
+        collection = get_complaints_collection()
+        if not ObjectId.is_valid(complaint_id):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid complaint ID format"
+            )
+
+        deleted = collection.find_one_and_delete({"_id": ObjectId(complaint_id)})
+
+        if not deleted:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Complaint not found"
+            )
+
+        return convert_objectid_to_string(deleted)
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error deleting complaint: {str(e)}"
+        )
+
+
 @app.get("/dashboard", response_model=DashboardStats, tags=["Analytics"])
 def get_dashboard_stats():
     """

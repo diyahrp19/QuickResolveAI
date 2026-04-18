@@ -2,12 +2,26 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { AppShell } from "@/components/layout/AppShell";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { PriorityBadge, StatusBadge } from "@/components/Badges";
 import { complaintsStore, useComplaints } from "@/lib/complaints-store";
 import type { Complaint, Status } from "@/lib/mock-data";
-import { Search, Eye, Clock } from "lucide-react";
+import { Search, Eye, Clock, Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/complaints")({
   head: () => ({
@@ -26,10 +40,18 @@ function ComplaintsPage() {
   const [pri, setPri] = useState("all");
   const [stat, setStat] = useState("all");
   const [active, setActive] = useState<Complaint | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Complaint | null>(null);
+
+  const handleDelete = async (complaint: Complaint) => {
+    await complaintsStore.remove(complaint.id);
+    if (active?.id === complaint.id) setActive(null);
+    if (deleteTarget?.id === complaint.id) setDeleteTarget(null);
+  };
 
   const filtered = useMemo(() => {
     return all.filter((c) => {
-      if (q && !`${c.id} ${c.text} ${c.customer}`.toLowerCase().includes(q.toLowerCase())) return false;
+      if (q && !`${c.id} ${c.text} ${c.customer}`.toLowerCase().includes(q.toLowerCase()))
+        return false;
       if (cat !== "all" && c.category !== cat) return false;
       if (pri !== "all" && c.priority !== pri) return false;
       if (stat !== "all" && c.status !== stat) return false;
@@ -42,18 +64,40 @@ function ComplaintsPage() {
       <div className="space-y-6">
         <div>
           <h1 className="font-display text-3xl font-bold">Complaint Management</h1>
-          <p className="text-muted-foreground mt-1">Search, filter and manage all incoming complaints.</p>
+          <p className="text-muted-foreground mt-1">
+            Search, filter and manage all incoming complaints.
+          </p>
         </div>
 
         <div className="rounded-2xl border border-border bg-card p-4 shadow-soft">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
             <div className="md:col-span-5 relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search by ID, text or customer..." className="pl-9" />
+              <Input
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                placeholder="Search by ID, text or customer..."
+                className="pl-9"
+              />
             </div>
-            <Filter value={cat} onChange={setCat} placeholder="Category" options={["Product Issue", "Packaging Issue", "Trade Inquiry"]} />
-            <Filter value={pri} onChange={setPri} placeholder="Priority" options={["High", "Medium", "Low"]} />
-            <Filter value={stat} onChange={setStat} placeholder="Status" options={["New", "In Progress", "Resolved"]} />
+            <Filter
+              value={cat}
+              onChange={setCat}
+              placeholder="Category"
+              options={["Product Issue", "Packaging Issue", "Trade Inquiry"]}
+            />
+            <Filter
+              value={pri}
+              onChange={setPri}
+              placeholder="Priority"
+              options={["High", "Medium", "Low"]}
+            />
+            <Filter
+              value={stat}
+              onChange={setStat}
+              placeholder="Status"
+              options={["New", "In Progress", "Resolved"]}
+            />
           </div>
         </div>
 
@@ -62,7 +106,7 @@ function ComplaintsPage() {
             <table className="w-full text-sm">
               <thead className="bg-secondary/60 text-xs uppercase tracking-wider text-muted-foreground">
                 <tr>
-                  <Th>ID</Th>
+                  <Th>S.No</Th>
                   <Th>Complaint</Th>
                   <Th>Category</Th>
                   <Th>Priority</Th>
@@ -72,15 +116,27 @@ function ComplaintsPage() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((c) => (
-                  <tr key={c.id} className="border-t border-border hover:bg-secondary/40 transition-colors">
-                    <td className="px-4 py-3 font-mono text-xs font-semibold text-primary">{c.id}</td>
+                {filtered.map((c, index) => (
+                  <tr
+                    key={c.id}
+                    className="border-t border-border hover:bg-secondary/40 transition-colors"
+                  >
+                    <td className="px-4 py-3 font-mono text-xs font-semibold text-primary">
+                      {index + 1}
+                    </td>
                     <td className="px-4 py-3 max-w-xs truncate">{c.text}</td>
                     <td className="px-4 py-3 text-muted-foreground">{c.category}</td>
-                    <td className="px-4 py-3"><PriorityBadge priority={c.priority} /></td>
                     <td className="px-4 py-3">
-                      <Select value={c.status} onValueChange={(v) => complaintsStore.updateStatus(c.id, v as Status)}>
-                        <SelectTrigger className="h-8 w-36"><SelectValue /></SelectTrigger>
+                      <PriorityBadge priority={c.priority} />
+                    </td>
+                    <td className="px-4 py-3">
+                      <Select
+                        value={c.status}
+                        onValueChange={(v) => complaintsStore.updateStatus(c.id, v as Status)}
+                      >
+                        <SelectTrigger className="h-8 w-36">
+                          <SelectValue />
+                        </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="New">New</SelectItem>
                           <SelectItem value="In Progress">In Progress</SelectItem>
@@ -88,19 +144,35 @@ function ComplaintsPage() {
                         </SelectContent>
                       </Select>
                     </td>
-                    <td className="px-4 py-3 text-muted-foreground text-xs">{new Date(c.createdAt).toLocaleDateString()}</td>
+                    <td className="px-4 py-3 text-muted-foreground text-xs">
+                      {new Date(c.createdAt).toLocaleDateString()}
+                    </td>
                     <td className="px-4 py-3 text-right">
-                      <button
-                        onClick={() => setActive(c)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-secondary hover:bg-accent text-xs font-medium transition-colors"
-                      >
-                        <Eye className="h-3.5 w-3.5" /> View
-                      </button>
+                      <div className="inline-flex items-center gap-2">
+                        <button
+                          onClick={() => setActive(c)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-secondary hover:bg-accent text-xs font-medium transition-colors"
+                        >
+                          <Eye className="h-3.5 w-3.5" /> View
+                        </button>
+                        <button
+                          onClick={() => setDeleteTarget(c)}
+                          aria-label={`Delete complaint ${c.id}`}
+                          title="Delete"
+                          className="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
                 {filtered.length === 0 && (
-                  <tr><td colSpan={7} className="px-4 py-12 text-center text-muted-foreground">No complaints match your filters.</td></tr>
+                  <tr>
+                    <td colSpan={7} className="px-4 py-12 text-center text-muted-foreground">
+                      No complaints match your filters.
+                    </td>
+                  </tr>
                 )}
               </tbody>
             </table>
@@ -109,6 +181,11 @@ function ComplaintsPage() {
       </div>
 
       <DetailDialog complaint={active} onClose={() => setActive(null)} />
+      <DeleteDialog
+        complaint={deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onDelete={handleDelete}
+      />
     </AppShell>
   );
 }
@@ -117,21 +194,43 @@ function Th({ children, className = "" }: { children: React.ReactNode; className
   return <th className={`px-4 py-3 text-left font-semibold ${className}`}>{children}</th>;
 }
 
-function Filter({ value, onChange, placeholder, options }: { value: string; onChange: (v: string) => void; placeholder: string; options: string[] }) {
+function Filter({
+  value,
+  onChange,
+  placeholder,
+  options,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  placeholder: string;
+  options: string[];
+}) {
   return (
     <div className="md:col-span-2">
       <Select value={value} onValueChange={onChange}>
-        <SelectTrigger><SelectValue placeholder={placeholder} /></SelectTrigger>
+        <SelectTrigger>
+          <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">All {placeholder}</SelectItem>
-          {options.map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+          {options.map((o) => (
+            <SelectItem key={o} value={o}>
+              {o}
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
     </div>
   );
 }
 
-function DetailDialog({ complaint, onClose }: { complaint: Complaint | null; onClose: () => void }) {
+function DetailDialog({
+  complaint,
+  onClose,
+}: {
+  complaint: Complaint | null;
+  onClose: () => void;
+}) {
   if (!complaint) return null;
   const c = complaint;
   return (
@@ -172,9 +271,12 @@ function DetailDialog({ complaint, onClose }: { complaint: Complaint | null; onC
             <ol className="space-y-3 border-l-2 border-border ml-2">
               {c.timeline.map((t, i) => (
                 <li key={i} className="relative pl-5">
-                  <span className="absolute -left-[7px] top-1.5 h-3 w-3 rounded-full bg-gradient-primary" />
+                  <span className="absolute -left-1.75 top-1.5 h-3 w-3 rounded-full bg-gradient-primary" />
                   <p className="text-sm font-medium">{t.label}</p>
-                  <p className="text-xs text-muted-foreground flex items-center gap-1"><Clock className="h-3 w-3" />{new Date(t.ts).toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground flex items-center gap-1">
+                    <Clock className="h-3 w-3" />
+                    {new Date(t.ts).toLocaleString()}
+                  </p>
                 </li>
               ))}
             </ol>
@@ -182,8 +284,13 @@ function DetailDialog({ complaint, onClose }: { complaint: Complaint | null; onC
 
           <div>
             <p className="text-xs uppercase text-muted-foreground mb-2">Update Status</p>
-            <Select value={c.status} onValueChange={(v) => complaintsStore.updateStatus(c.id, v as Status)}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
+            <Select
+              value={c.status}
+              onValueChange={(v) => complaintsStore.updateStatus(c.id, v as Status)}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="New">New</SelectItem>
                 <SelectItem value="In Progress">In Progress</SelectItem>
@@ -192,6 +299,59 @@ function DetailDialog({ complaint, onClose }: { complaint: Complaint | null; onC
             </Select>
           </div>
         </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function DeleteDialog({
+  complaint,
+  onClose,
+  onDelete,
+}: {
+  complaint: Complaint | null;
+  onClose: () => void;
+  onDelete: (complaint: Complaint) => Promise<void>;
+}) {
+  if (!complaint) return null;
+
+  const c = complaint;
+
+  return (
+    <Dialog open={!!complaint} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-sm gap-0 overflow-hidden p-0 sm:rounded-2xl">
+        <div className="border-b border-border bg-destructive/10 px-4 py-3">
+          <DialogHeader className="space-y-1 text-left">
+            <DialogTitle className="text-base font-semibold">Delete item</DialogTitle>
+            <DialogDescription className="text-xs leading-5 text-muted-foreground">
+              Are you sure you want to delete this item? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+        </div>
+
+        <div className="space-y-3 px-4 py-4">
+          <div className="rounded-lg border border-border bg-secondary/40 px-3 py-2.5">
+            <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Complaint</p>
+            <p className="mt-1 truncate text-sm font-medium">{c.text}</p>
+            <p className="mt-1 text-xs text-muted-foreground">ID: {c.id}</p>
+          </div>
+        </div>
+
+        <DialogFooter className="border-t border-border bg-secondary/20 px-4 py-3 sm:justify-end">
+          <div className="flex w-full gap-2 sm:w-auto">
+            <Button variant="outline" size="sm" onClick={onClose} className="flex-1 sm:flex-none">
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => void onDelete(c)}
+              className="flex-1 sm:flex-none"
+            >
+              Delete
+            </Button>
+          </div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

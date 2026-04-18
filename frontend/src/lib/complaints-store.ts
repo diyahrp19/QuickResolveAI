@@ -75,7 +75,7 @@ export const complaintsStore = {
       customer_name: c.customer,
     });
     const mapped = mapApiComplaint(created);
-    complaints = [mapped, ...complaints.filter((item) => item.id !== mapped.id)];
+    complaints = [...complaints.filter((item) => item.id !== mapped.id), mapped];
     emit();
     return mapped;
   },
@@ -95,6 +95,12 @@ export const complaintsStore = {
     );
     emit();
     return mapped;
+  },
+  remove: async (id: string) => {
+    const removed = await api.complaints.remove(id);
+    complaints = complaints.filter((c) => c.id !== id);
+    emit();
+    return removed;
   },
   subscribe: (l: () => void) => {
     listeners.add(l);
