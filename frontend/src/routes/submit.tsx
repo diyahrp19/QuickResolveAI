@@ -61,7 +61,7 @@ function SubmitPage() {
         priority: created.priority,
         recommendation: created.recommendation,
       });
-      toast.success(`Complaint ${created.id} created`);
+      toast.success(`Complaint submitted for ${customer}`);
       setText("");
       setCustomer("");
       setSource("Email");

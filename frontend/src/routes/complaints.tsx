@@ -322,7 +322,7 @@ function DeleteDialog({
       <DialogContent className="max-w-sm gap-0 overflow-hidden p-0 sm:rounded-2xl">
         <div className="border-b border-border bg-destructive/10 px-4 py-3">
           <DialogHeader className="space-y-1 text-left">
-            <DialogTitle className="text-base font-semibold">Delete item</DialogTitle>
+            <DialogTitle className="text-base font-semibold">Delete complaint?</DialogTitle>
             <DialogDescription className="text-xs leading-5 text-muted-foreground">
               Are you sure you want to delete this item? This action cannot be undone.
             </DialogDescription>
@@ -333,7 +333,7 @@ function DeleteDialog({
           <div className="rounded-lg border border-border bg-secondary/40 px-3 py-2.5">
             <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Complaint</p>
             <p className="mt-1 truncate text-sm font-medium">{c.text}</p>
-            <p className="mt-1 text-xs text-muted-foreground">ID: {c.id}</p>
+            <p className="mt-1 text-xs text-muted-foreground">Customer: {c.customer}</p>
           </div>
         </div>
 
