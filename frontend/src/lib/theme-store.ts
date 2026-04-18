@@ -29,6 +29,19 @@ function applyTheme(theme: Theme) {
   document.documentElement.classList.toggle("dark", theme === "dark");
 }
 
+function disableThemeTransitionsTemporarily() {
+  if (typeof document === "undefined") return;
+
+  const root = document.documentElement;
+  root.classList.add("theme-switching");
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      root.classList.remove("theme-switching");
+    });
+  });
+}
+
 export const themeStore = {
   getState: () => state,
   subscribe: (listener: () => void) => {
@@ -46,6 +59,7 @@ export const themeStore = {
     if (typeof window !== "undefined") {
       window.localStorage.setItem(THEME_KEY, theme);
     }
+    disableThemeTransitionsTemporarily();
     applyTheme(theme);
     emit();
   },

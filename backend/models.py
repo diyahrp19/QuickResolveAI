@@ -19,7 +19,7 @@ class ComplaintAnalysisRequest(BaseModel):
 class ComplaintAnalysisResponse(BaseModel):
     """Structured AI analysis response model"""
 
-    category: Literal["Product Issue", "Packaging Issue", "Trade Inquiry"]
+    category: Literal["Product Issue", "Packaging Issue", "Trade Inquiry", "Spam"]
     priority: Literal["High", "Medium", "Low"]
     recommendation: str
 

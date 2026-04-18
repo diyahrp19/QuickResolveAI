@@ -11,9 +11,10 @@ from urllib import error, request
 
 from services.complaint_service import process_complaint
 
-ALLOWED_CATEGORIES = {"Product Issue", "Packaging Issue", "Trade Inquiry"}
+ALLOWED_CATEGORIES = {"Product Issue", "Packaging Issue", "Trade Inquiry", "Spam"}
 ALLOWED_PRIORITIES = {"High", "Medium", "Low"}
 PRIORITY_RANK = {"Low": 1, "Medium": 2, "High": 3}
+AI_TEMPERATURE = float(os.getenv("AI_TEMPERATURE", "0.2"))
 
 TRADE_KEYWORDS = {
     "distributor",
@@ -31,6 +32,32 @@ TRADE_KEYWORDS = {
     "partnership",
     "supplier",
     "vendor",
+}
+
+SPAM_KEYWORDS = {
+    "spam",
+    "test",
+    "testing",
+    "hello",
+    "hi",
+    "random",
+    "fun",
+    "joke",
+    "just checking",
+    "asdf",
+    "qwerty",
+    "lorem ipsum",
+    "subscribe",
+    "click here",
+    "promo",
+    "offer",
+    "win money",
+    "lottery",
+    "bitcoin",
+    "telegram",
+    "http://",
+    "https://",
+    "www.",
 }
 
 PACKAGING_KEYWORDS = {
@@ -146,7 +173,7 @@ def _build_prompt(complaint: str) -> list[dict[str, str]]:
         "You are an expert customer complaint triage assistant. "
         "Read the complaint and classify it into strict fields. "
         "Return ONLY JSON with keys: category, priority, recommendation. "
-        "Allowed category values: Product Issue, Packaging Issue, Trade Inquiry. "
+        "Allowed category values: Product Issue, Packaging Issue, Trade Inquiry, Spam. "
         "Allowed priority values: High, Medium, Low. "
         "Recommendation must be one concise action-oriented sentence."
     )
@@ -170,7 +197,7 @@ def _analyze_with_openai(complaint: str) -> dict[str, Any] | None:
     payload = {
         "model": model,
         "messages": _build_prompt(complaint),
-        "temperature": 0,
+        "temperature": AI_TEMPERATURE,
         "response_format": {"type": "json_object"},
     }
 
@@ -197,7 +224,10 @@ def _analyze_with_gemini(complaint: str) -> dict[str, Any] | None:
 
     payload = {
         "contents": [{"parts": [{"text": prompt_text}]}],
-        "generationConfig": {"temperature": 0, "responseMimeType": "application/json"},
+        "generationConfig": {
+            "temperature": AI_TEMPERATURE,
+            "responseMimeType": "application/json",
+        },
     }
 
     try:
@@ -261,6 +291,8 @@ def _normalize_category(category: str) -> str:
         return category
 
     value = category.lower()
+    if "spam" in value or "irrelevant" in value or "fake" in value:
+        return "Spam"
     if "trade" in value or "sales" in value or "inquiry" in value:
         return "Trade Inquiry"
     if "pack" in value or "leak" in value or "delivery" in value:
@@ -281,6 +313,9 @@ def _normalize_priority(priority: str) -> str:
 
 
 def _default_recommendation(category: str, priority: str) -> str:
+    if category == "Spam":
+        return "Mark this message as spam and ignore it unless further verification is needed."
+
     if category == "Trade Inquiry":
         return "Forward the request to the sales team and follow up with the customer."
 
@@ -339,11 +374,13 @@ def _blend_analysis(
 
 def _infer_category_from_text(text: str) -> tuple[str, int]:
     value = text.lower()
+    spam_score = _spam_score(value)
     trade_score = _keyword_score(value, TRADE_KEYWORDS)
     packaging_score = _keyword_score(value, PACKAGING_KEYWORDS)
     product_score = _keyword_score(value, PRODUCT_KEYWORDS)
 
     scores = {
+        "Spam": spam_score,
         "Trade Inquiry": trade_score,
         "Packaging Issue": packaging_score,
         "Product Issue": product_score,
@@ -358,6 +395,9 @@ def _infer_category_from_text(text: str) -> tuple[str, int]:
 
 def _infer_priority_from_text(text: str, category: str) -> str:
     value = text.lower()
+
+    if category == "Spam":
+        return "Low"
 
     has_minor_context = _contains_any(value, MINOR_INDICATORS) and _contains_any(
         value, USABLE_INDICATORS
@@ -416,6 +456,25 @@ def _contains_any(text: str, keywords: set[str]) -> bool:
     return any(kw in text for kw in keywords)
 
 
+def _spam_score(text: str) -> int:
+    score = _keyword_score(text, SPAM_KEYWORDS)
+
+    words = [w for w in text.split() if w]
+    if len(words) <= 2:
+        score += 1
+
+    # Repeated single characters like "aaaa" or numeric noise look suspicious.
+    if any(ch * 4 in text for ch in "abcdefghijklmnopqrstuvwxyz0123456789"):
+        score += 2
+
+    if "anonymous" in text and not _contains_any(
+        text, TRADE_KEYWORDS | PACKAGING_KEYWORDS | PRODUCT_KEYWORDS
+    ):
+        score += 2
+
+    return score
+
+
 def _max_priority(a: str, b: str) -> str:
     if PRIORITY_RANK.get(a, 1) >= PRIORITY_RANK.get(b, 1):
         return a
@@ -424,12 +483,15 @@ def _max_priority(a: str, b: str) -> str:
 
 def _is_weak_recommendation(value: str) -> bool:
     text = value.lower().strip()
+
+    # Treat very short/generic answers as weak so we can provide a better fallback.
+    if len(text) < 18:
+        return True
+
     weak_values = {
         "follow up with customer",
         "follow up with the customer",
         "follow up",
         "contact customer",
-        "follow up with the customer and resolve the issue promptly.",
-        "follow up with customer and resolve the issue promptly.",
     }
     return text in weak_values

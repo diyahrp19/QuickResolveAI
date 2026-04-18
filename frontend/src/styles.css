@@ -206,6 +206,13 @@
     transition-duration: 200ms;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
+  html.theme-switching *,
+  html.theme-switching *::before,
+  html.theme-switching *::after {
+    transition-property: none !important;
+    transition-duration: 0ms !important;
+    transition-delay: 0ms !important;
+  }
   body {
     background-color: var(--color-background);
     background-image: var(--gradient-surface);

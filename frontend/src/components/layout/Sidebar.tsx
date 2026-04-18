@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   LayoutDashboard,
   FilePlus2,
@@ -20,12 +20,10 @@ const items = [
 
 export function Sidebar() {
   const { pathname } = useLocation();
-  const [collapsed, setCollapsed] = useState(false);
-
-  useEffect(() => {
-    const saved = window.localStorage.getItem("quickresolve-sidebar-collapsed");
-    setCollapsed(saved === "true");
-  }, []);
+  const [collapsed, setCollapsed] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.localStorage.getItem("quickresolve-sidebar-collapsed") === "true";
+  });
 
   const toggle = () => {
     const next = !collapsed;

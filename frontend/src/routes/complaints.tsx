@@ -86,7 +86,7 @@ function ComplaintsPage() {
               value={cat}
               onChange={setCat}
               placeholder="Category"
-              options={["Product Issue", "Packaging Issue", "Trade Inquiry"]}
+              options={["Product Issue", "Packaging Issue", "Trade Inquiry", "Spam"]}
             />
             <Filter
               value={pri}
