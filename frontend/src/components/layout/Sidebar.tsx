@@ -1,19 +1,11 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import {
-  LayoutDashboard,
-  FilePlus2,
-  ListChecks,
-  BarChart3,
-  FileText,
-  Sparkles,
-} from "lucide-react";
+import { LayoutDashboard, FilePlus2, ListChecks, FileText, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const items = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
   { to: "/submit", label: "Submit Complaint", icon: FilePlus2 },
   { to: "/complaints", label: "Complaint Management", icon: ListChecks },
-  { to: "/analytics", label: "Analytics", icon: BarChart3 },
   { to: "/reports", label: "Reports", icon: FileText },
 ] as const;
 

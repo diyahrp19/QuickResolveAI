@@ -1,4 +1,11 @@
 import type { Category, Priority, Source, Status } from "./mock-data";
+import {
+  AUTH_TOKEN_KEY,
+  type AuthResponse,
+  type AuthUser,
+  type LoginPayload,
+  type SignupPayload,
+} from "./auth";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
 
@@ -33,10 +40,17 @@ export interface DashboardStats {
   pending: number;
 }
 
+function getStoredToken() {
+  if (typeof window === "undefined") return null;
+  return window.localStorage.getItem(AUTH_TOKEN_KEY);
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const token = getStoredToken();
   const response = await fetch(`${API_BASE_URL}${path}`, {
     headers: {
       "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...(init?.headers ?? {}),
     },
     ...init,
@@ -55,6 +69,19 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export const api = {
+  auth: {
+    signup: (payload: SignupPayload) =>
+      request<AuthUser>("/auth/signup", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
+    login: (payload: LoginPayload) =>
+      request<AuthResponse>("/auth/login", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
+    me: () => request<AuthUser>("/auth/me"),
+  },
   complaints: {
     list: () => request<ComplaintApiResponse[]>("/complaints"),
     create: (payload: ComplaintSubmitPayload) =>

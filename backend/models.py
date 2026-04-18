@@ -50,3 +50,31 @@ class DashboardStats(BaseModel):
     low_priority: int
     resolved: int
     pending: int
+
+
+class SignupRequest(BaseModel):
+    """Request model for user signup"""
+    name: str
+    email: str
+    password: str
+
+
+class LoginRequest(BaseModel):
+    """Request model for user login"""
+    email: str
+    password: str
+
+
+class UserResponse(BaseModel):
+    """Response model for authenticated user data"""
+    id: str = Field(description="MongoDB ObjectId as a string")
+    name: str
+    email: str
+    created_at: str
+
+
+class AuthResponse(BaseModel):
+    """Response model for login tokens"""
+    access_token: str
+    token_type: str
+    user: UserResponse

@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from "react";
 import { api } from "./api";
+import { AUTH_TOKEN_KEY } from "./auth";
 import type { Complaint, Source, Status } from "./mock-data";
 
 type ComplaintCreateInput = {
@@ -11,7 +12,13 @@ type ComplaintCreateInput = {
 let complaints: Complaint[] = [];
 let loaded = false;
 let loadPromise: Promise<void> | null = null;
+let loadedForToken: string | null = null;
 const listeners = new Set<() => void>();
+
+function getCurrentToken() {
+  if (typeof window === "undefined") return null;
+  return window.localStorage.getItem(AUTH_TOKEN_KEY);
+}
 
 function emit() {
   listeners.forEach((l) => l());
@@ -48,14 +55,32 @@ function mapApiComplaint(c: {
 }
 
 async function loadFromApi() {
+  const token = getCurrentToken();
+  if (!token) {
+    complaints = [];
+    loaded = true;
+    loadedForToken = null;
+    emit();
+    return;
+  }
+
   const items = await api.complaints.list();
   complaints = items.map(mapApiComplaint);
   loaded = true;
+  loadedForToken = token;
   emit();
 }
 
 function ensureLoaded() {
-  if (loaded || loadPromise) return;
+  const currentToken = getCurrentToken();
+  if (loaded && loadedForToken === currentToken) return;
+  if (loadPromise) return;
+
+  complaints = [];
+  loaded = false;
+  loadedForToken = null;
+  emit();
+
   loadPromise = loadFromApi()
     .catch(() => {
       loaded = true;
