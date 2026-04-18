@@ -76,19 +76,26 @@ function SubmitPage() {
     <AppShell>
       <div className="max-w-4xl mx-auto space-y-8">
         <div>
-          <h1 className="font-display text-3xl font-bold">Submit Complaint</h1>
-          <p className="text-muted-foreground mt-1">
+          <h1 className="font-display text-3xl md:text-4xl font-bold tracking-tight">
+            Submit Complaint
+          </h1>
+          <p className="text-muted-foreground mt-1.5 text-sm md:text-base">
             Our AI will instantly classify and recommend a resolution.
           </p>
         </div>
 
         <form
           onSubmit={onSubmit}
-          className="rounded-2xl border border-border bg-card shadow-soft p-6 md:p-8 space-y-5"
+          className="rounded-3xl border border-border/80 glass-card shadow-soft p-6 md:p-8 space-y-6"
         >
           <div className="grid md:grid-cols-2 gap-5">
             <div className="space-y-2">
-              <Label htmlFor="customer">Customer name</Label>
+              <Label
+                htmlFor="customer"
+                className="text-xs uppercase tracking-[0.08em] text-muted-foreground"
+              >
+                Customer name
+              </Label>
               <Input
                 id="customer"
                 value={customer}
@@ -97,7 +104,9 @@ function SubmitPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Source</Label>
+              <Label className="text-xs uppercase tracking-[0.08em] text-muted-foreground">
+                Source
+              </Label>
               <Select value={source} onValueChange={(v) => setSource(v as Source)}>
                 <SelectTrigger>
                   <SelectValue />
@@ -112,7 +121,12 @@ function SubmitPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="text">Complaint description</Label>
+            <Label
+              htmlFor="text"
+              className="text-xs uppercase tracking-[0.08em] text-muted-foreground"
+            >
+              Complaint description
+            </Label>
             <Textarea
               id="text"
               value={text}
@@ -122,12 +136,12 @@ function SubmitPage() {
             />
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex justify-end pt-1">
             <Button
               type="submit"
               size="lg"
               disabled={analyzing}
-              className="bg-gradient-primary hover:opacity-90 shadow-glow"
+              className="bg-gradient-primary hover:opacity-95 shadow-glow"
             >
               {analyzing ? (
                 <>
@@ -145,9 +159,9 @@ function SubmitPage() {
         </form>
 
         {result && (
-          <div className="rounded-2xl border border-primary/20 bg-linear-to-br from-primary/5 to-transparent p-6 md:p-8 shadow-md animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="rounded-3xl border border-primary/25 bg-linear-to-br from-primary/10 via-card/85 to-transparent p-6 md:p-8 shadow-md animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="flex items-center gap-2 mb-5">
-              <div className="h-9 w-9 rounded-xl bg-gradient-primary flex items-center justify-center">
+              <div className="h-10 w-10 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-glow">
                 <Sparkles className="h-4 w-4 text-primary-foreground" />
               </div>
               <div>
@@ -162,7 +176,7 @@ function SubmitPage() {
                 label="Category"
                 value={result.category}
               />
-              <div className="rounded-xl bg-card border border-border p-4">
+              <div className="rounded-2xl bg-card/80 border border-border/80 p-4 shadow-soft">
                 <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
                   <Sparkles className="h-4 w-4" /> Priority
                 </div>
@@ -183,7 +197,7 @@ function SubmitPage() {
 
 function InfoTile({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
-    <div className="rounded-xl bg-card border border-border p-4">
+    <div className="rounded-2xl bg-card/80 border border-border/80 p-4 shadow-soft">
       <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
         {icon} {label}
       </div>

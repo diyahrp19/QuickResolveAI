@@ -61,15 +61,17 @@ function ComplaintsPage() {
 
   return (
     <AppShell>
-      <div className="space-y-6">
+      <div className="space-y-6 animate-enter">
         <div>
-          <h1 className="font-display text-3xl font-bold">Complaint Management</h1>
-          <p className="text-muted-foreground mt-1">
+          <h1 className="font-display text-3xl md:text-4xl font-bold tracking-tight">
+            Complaint Management
+          </h1>
+          <p className="text-muted-foreground mt-1.5 text-sm md:text-base">
             Search, filter and manage all incoming complaints.
           </p>
         </div>
 
-        <div className="rounded-2xl border border-border bg-card p-4 shadow-soft">
+        <div className="rounded-3xl border border-border/80 glass-card p-4 shadow-soft surface-ring">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
             <div className="md:col-span-5 relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -77,7 +79,7 @@ function ComplaintsPage() {
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="Search by ID, text or customer..."
-                className="pl-9"
+                className="pl-9 rounded-2xl bg-card/55"
               />
             </div>
             <Filter
@@ -101,10 +103,10 @@ function ComplaintsPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-border bg-card shadow-soft overflow-hidden">
+        <div className="rounded-3xl border border-border/80 glass-card shadow-soft overflow-hidden surface-ring">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-secondary/60 text-xs uppercase tracking-wider text-muted-foreground">
+              <thead className="sticky top-0 z-10 bg-secondary/78 backdrop-blur-lg text-xs uppercase tracking-[0.11em] text-muted-foreground">
                 <tr>
                   <Th>S.No</Th>
                   <Th>Complaint</Th>
@@ -119,12 +121,12 @@ function ComplaintsPage() {
                 {filtered.map((c, index) => (
                   <tr
                     key={c.id}
-                    className="border-t border-border hover:bg-secondary/40 transition-colors"
+                    className="border-t border-border/75 hover:bg-secondary/48 transition-all"
                   >
                     <td className="px-4 py-3 font-mono text-xs font-semibold text-primary">
                       {index + 1}
                     </td>
-                    <td className="px-4 py-3 max-w-xs truncate">{c.text}</td>
+                    <td className="px-4 py-3 max-w-xs truncate font-medium">{c.text}</td>
                     <td className="px-4 py-3 text-muted-foreground">{c.category}</td>
                     <td className="px-4 py-3">
                       <PriorityBadge priority={c.priority} />
@@ -134,7 +136,7 @@ function ComplaintsPage() {
                         value={c.status}
                         onValueChange={(v) => complaintsStore.updateStatus(c.id, v as Status)}
                       >
-                        <SelectTrigger className="h-8 w-36">
+                        <SelectTrigger className="h-9 w-36 rounded-xl bg-card/60">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -151,7 +153,7 @@ function ComplaintsPage() {
                       <div className="inline-flex items-center gap-2">
                         <button
                           onClick={() => setActive(c)}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-secondary hover:bg-accent text-xs font-medium transition-colors"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border/80 bg-card/75 hover:bg-accent text-xs font-semibold transition-all hover:-translate-y-px button-glow"
                         >
                           <Eye className="h-3.5 w-3.5" /> View
                         </button>
@@ -159,7 +161,7 @@ function ComplaintsPage() {
                           onClick={() => setDeleteTarget(c)}
                           aria-label={`Delete complaint ${c.id}`}
                           title="Delete"
-                          className="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors"
+                          className="inline-flex items-center justify-center h-8 w-8 rounded-xl border border-destructive/20 bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all hover:-translate-y-px"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </button>
@@ -208,7 +210,7 @@ function Filter({
   return (
     <div className="md:col-span-2">
       <Select value={value} onValueChange={onChange}>
-        <SelectTrigger>
+        <SelectTrigger className="rounded-2xl bg-card/55">
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
@@ -244,7 +246,7 @@ function DetailDialog({
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-5">
-          <div className="rounded-xl bg-secondary/60 p-4">
+          <div className="rounded-2xl bg-secondary/60 p-4 border border-border/75 surface-ring">
             <p className="text-xs uppercase text-muted-foreground mb-1">Complaint</p>
             <p className="text-sm">{c.text}</p>
           </div>
@@ -261,7 +263,7 @@ function DetailDialog({
             </div>
           </div>
 
-          <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
+          <div className="rounded-2xl border border-primary/25 bg-primary/8 p-4 surface-ring">
             <p className="text-xs uppercase text-primary font-semibold mb-1">AI Recommendation</p>
             <p className="text-sm">{c.recommendation}</p>
           </div>
@@ -320,7 +322,7 @@ function DeleteDialog({
   return (
     <Dialog open={!!complaint} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-sm gap-0 overflow-hidden p-0 sm:rounded-2xl">
-        <div className="border-b border-border bg-destructive/10 px-4 py-3">
+        <div className="border-b border-border/80 bg-destructive/10 px-4 py-3">
           <DialogHeader className="space-y-1 text-left">
             <DialogTitle className="text-base font-semibold">Delete complaint?</DialogTitle>
             <DialogDescription className="text-xs leading-5 text-muted-foreground">
@@ -330,7 +332,7 @@ function DeleteDialog({
         </div>
 
         <div className="space-y-3 px-4 py-4">
-          <div className="rounded-lg border border-border bg-secondary/40 px-3 py-2.5">
+          <div className="rounded-xl border border-border/80 bg-secondary/40 px-3 py-2.5">
             <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Complaint</p>
             <p className="mt-1 truncate text-sm font-medium">{c.text}</p>
             <p className="mt-1 text-xs text-muted-foreground">Customer: {c.customer}</p>

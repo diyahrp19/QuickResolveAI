@@ -1,4 +1,5 @@
 import type { LucideIcon } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface StatCardProps {
@@ -10,25 +11,69 @@ interface StatCardProps {
 }
 
 const tones = {
-  primary: "from-primary/15 to-primary/5 text-primary",
-  destructive: "from-destructive/15 to-destructive/5 text-destructive",
-  success: "from-success/15 to-success/5 text-success",
-  warning: "from-warning/20 to-warning/5 text-warning-foreground",
+  primary: "from-primary/18 to-primary/6 text-primary",
+  destructive: "from-destructive/18 to-destructive/6 text-destructive",
+  success: "from-success/18 to-success/6 text-success",
+  warning: "from-warning/25 to-warning/6 text-warning-foreground",
 };
 
 export function StatCard({ label, value, delta, icon: Icon, tone = "primary" }: StatCardProps) {
+  const numericValue = useMemo(() => {
+    if (typeof value === "number") return value;
+    const parsed = Number(String(value).replace(/[^\d.-]/g, ""));
+    return Number.isFinite(parsed) ? parsed : null;
+  }, [value]);
+
+  const animated = useAnimatedNumber(numericValue, 900);
+
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-soft transition-all hover:shadow-md hover:-translate-y-0.5">
+    <div className="group relative overflow-hidden rounded-3xl border border-border/80 glass-card p-6 shadow-soft hover-lift">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_90%_10%,color-mix(in_oklch,var(--color-primary)_18%,transparent),transparent_46%)] opacity-70" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-white/55 to-transparent" />
       <div className="flex items-start justify-between">
-        <div>
-          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{label}</p>
-          <p className="mt-2 font-display text-3xl font-bold text-foreground">{value}</p>
-          {delta && <p className="mt-1 text-xs text-muted-foreground">{delta}</p>}
+        <div className="relative z-10">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.11em] text-muted-foreground">
+            {label}
+          </p>
+          <p className="mt-2 font-display text-3xl font-bold tracking-tight text-foreground">
+            {numericValue !== null ? animated.toLocaleString() : value}
+          </p>
+          {delta && <p className="mt-1 text-xs text-muted-foreground/95">{delta}</p>}
         </div>
-        <div className={cn("h-11 w-11 rounded-xl bg-gradient-to-br flex items-center justify-center", tones[tone])}>
+        <div
+          className={cn(
+            "relative z-10 h-11 w-11 rounded-2xl bg-linear-to-br flex items-center justify-center shadow-soft",
+            tones[tone],
+          )}
+        >
           <Icon className="h-5 w-5" />
         </div>
       </div>
     </div>
   );
+}
+
+function useAnimatedNumber(target: number | null, durationMs: number) {
+  const [value, setValue] = useState(0);
+
+  useEffect(() => {
+    if (target === null) return;
+
+    let raf = 0;
+    const start = performance.now();
+    const from = value;
+    const delta = target - from;
+
+    const tick = (now: number) => {
+      const progress = Math.min((now - start) / durationMs, 1);
+      const eased = 1 - (1 - progress) * (1 - progress) * (1 - progress);
+      setValue(Math.round(from + delta * eased));
+      if (progress < 1) raf = requestAnimationFrame(tick);
+    };
+
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [target, durationMs]);
+
+  return value;
 }

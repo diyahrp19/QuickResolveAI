@@ -4,12 +4,13 @@ import { cn } from "@/lib/utils";
 
 export function PriorityBadge({ priority }: { priority: Priority }) {
   const map: Record<Priority, string> = {
-    High: "bg-destructive/10 text-destructive border-destructive/20",
-    Medium: "bg-warning/15 text-warning-foreground border-warning/30",
-    Low: "bg-success/10 text-success border-success/20",
+    High: "bg-destructive/10 text-destructive border-destructive/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.4)]",
+    Medium:
+      "bg-warning/15 text-warning-foreground border-warning/35 shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]",
+    Low: "bg-success/12 text-success border-success/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]",
   };
   return (
-    <Badge variant="outline" className={cn("font-medium", map[priority])}>
+    <Badge variant="outline" className={cn("font-semibold tracking-wide", map[priority])}>
       {priority}
     </Badge>
   );
@@ -17,12 +18,14 @@ export function PriorityBadge({ priority }: { priority: Priority }) {
 
 export function StatusBadge({ status }: { status: Status }) {
   const map: Record<Status, string> = {
-    New: "bg-primary/10 text-primary border-primary/20",
-    "In Progress": "bg-warning/15 text-warning-foreground border-warning/30",
-    Resolved: "bg-success/10 text-success border-success/20",
+    New: "bg-primary/10 text-primary border-primary/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.4)]",
+    "In Progress":
+      "bg-warning/15 text-warning-foreground border-warning/35 shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]",
+    Resolved:
+      "bg-success/12 text-success border-success/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]",
   };
   return (
-    <Badge variant="outline" className={cn("font-medium", map[status])}>
+    <Badge variant="outline" className={cn("font-semibold tracking-wide", map[status])}>
       {status}
     </Badge>
   );

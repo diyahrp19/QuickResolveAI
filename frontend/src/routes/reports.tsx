@@ -22,13 +22,35 @@ function ReportsPage() {
   const high = complaints.filter((c) => c.priority === "High").length;
 
   const exportCSV = () => {
-    const headers = ["ID", "Customer", "Category", "Priority", "Status", "Source", "Created", "Text"];
-    const rows = complaints.map((c) => [c.id, c.customer, c.category, c.priority, c.status, c.source, c.createdAt, `"${c.text.replace(/"/g, '""')}"`].join(","));
+    const headers = [
+      "ID",
+      "Customer",
+      "Category",
+      "Priority",
+      "Status",
+      "Source",
+      "Created",
+      "Text",
+    ];
+    const rows = complaints.map((c) =>
+      [
+        c.id,
+        c.customer,
+        c.category,
+        c.priority,
+        c.status,
+        c.source,
+        c.createdAt,
+        `"${c.text.replace(/"/g, '""')}"`,
+      ].join(","),
+    );
     const csv = [headers.join(","), ...rows].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url; a.download = "complaints.csv"; a.click();
+    a.href = url;
+    a.download = "complaints.csv";
+    a.click();
     URL.revokeObjectURL(url);
     toast.success("CSV exported");
   };
@@ -56,20 +78,26 @@ function ReportsPage() {
     <AppShell>
       <div className="space-y-6">
         <div>
-          <h1 className="font-display text-3xl font-bold">Reports</h1>
-          <p className="text-muted-foreground mt-1">Export complaint data and review summary insights.</p>
+          <h1 className="font-display text-3xl md:text-4xl font-bold tracking-tight">Reports</h1>
+          <p className="text-muted-foreground mt-1.5 text-sm md:text-base">
+            Export complaint data and review summary insights.
+          </p>
         </div>
 
-        <div className="rounded-2xl bg-gradient-primary p-8 text-primary-foreground shadow-glow">
-          <div className="flex items-center gap-3 mb-4">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-primary p-8 text-primary-foreground shadow-glow">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_10%_20%,rgba(255,255,255,0.22),transparent_46%),radial-gradient(circle_at_90%_10%,rgba(255,255,255,0.18),transparent_40%)]" />
+          <div className="relative flex items-center gap-3 mb-4">
             <TrendingUp className="h-6 w-6" />
             <h2 className="font-display text-xl font-bold">Summary Report</h2>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="relative grid grid-cols-2 md:grid-cols-4 gap-6">
             <Stat label="Total Complaints" value={total} />
             <Stat label="Resolved" value={resolved} />
             <Stat label="High Priority" value={high} />
-            <Stat label="Resolution Rate" value={`${total ? Math.round((resolved / total) * 100) : 0}%`} />
+            <Stat
+              label="Resolution Rate"
+              value={`${total ? Math.round((resolved / total) * 100) : 0}%`}
+            />
           </div>
         </div>
 
@@ -95,21 +123,31 @@ function ReportsPage() {
 function Stat({ label, value }: { label: string; value: string | number }) {
   return (
     <div>
-      <p className="text-xs uppercase tracking-wider opacity-80">{label}</p>
+      <p className="text-xs uppercase tracking-[0.11em] opacity-80">{label}</p>
       <p className="font-display text-3xl font-bold mt-1">{value}</p>
     </div>
   );
 }
 
-function ExportCard({ title, desc, icon: Icon, onClick }: { title: string; desc: string; icon: typeof FileText; onClick: () => void }) {
+function ExportCard({
+  title,
+  desc,
+  icon: Icon,
+  onClick,
+}: {
+  title: string;
+  desc: string;
+  icon: typeof FileText;
+  onClick: () => void;
+}) {
   return (
-    <div className="rounded-2xl border border-border bg-card p-6 shadow-soft hover:shadow-md transition-all">
-      <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary/15 to-primary/5 text-primary flex items-center justify-center mb-4">
+    <div className="rounded-3xl border border-border/80 glass-card p-6 shadow-soft hover-lift">
+      <div className="h-12 w-12 rounded-2xl bg-linear-to-br from-primary/20 to-primary/8 text-primary flex items-center justify-center mb-4 shadow-soft">
         <Icon className="h-6 w-6" />
       </div>
-      <h3 className="font-display font-semibold text-lg">{title}</h3>
+      <h3 className="font-display font-semibold text-lg tracking-tight">{title}</h3>
       <p className="text-sm text-muted-foreground mt-1 mb-4">{desc}</p>
-      <Button onClick={onClick} className="bg-gradient-primary hover:opacity-90">
+      <Button onClick={onClick} className="bg-gradient-primary hover:opacity-95">
         <Download className="h-4 w-4 mr-2" /> Download
       </Button>
     </div>
