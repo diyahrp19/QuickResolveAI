@@ -47,9 +47,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     try {
       const body = await response.json();
       message = body?.detail ?? message;
-    } catch {
-      // ignore non-JSON errors
-    }
+    } catch {}
     throw new Error(message);
   }
 

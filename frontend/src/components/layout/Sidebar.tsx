@@ -1,5 +1,12 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { LayoutDashboard, FilePlus2, ListChecks, BarChart3, FileText, Sparkles } from "lucide-react";
+import {
+  LayoutDashboard,
+  FilePlus2,
+  ListChecks,
+  BarChart3,
+  FileText,
+  Sparkles,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const items = [
@@ -20,7 +27,9 @@ export function Sidebar() {
         </div>
         <div className="leading-tight">
           <div className="font-display font-bold text-foreground">QuickResolveAI</div>
-          <div className="text-[10px] text-muted-foreground tracking-wide uppercase">AI Complaint System</div>
+          <div className="text-[10px] text-muted-foreground tracking-wide uppercase">
+            AI Complaint System
+          </div>
         </div>
       </div>
       <nav className="flex-1 p-3 space-y-1">
@@ -44,13 +53,6 @@ export function Sidebar() {
           );
         })}
       </nav>
-      <div className="p-4 m-3 rounded-xl bg-gradient-primary text-primary-foreground">
-        <div className="text-xs opacity-90">AI Engine</div>
-        <div className="text-sm font-semibold">Active & Learning</div>
-        <div className="mt-2 h-1.5 rounded-full bg-white/25 overflow-hidden">
-          <div className="h-full w-3/4 bg-white rounded-full" />
-        </div>
-      </div>
     </aside>
   );
 }

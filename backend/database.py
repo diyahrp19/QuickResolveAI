@@ -6,12 +6,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# MongoDB Configuration
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
 DATABASE_NAME = "quickresolveai"
 COLLECTION_NAME = "complaints"
 
-# Initialize MongoDB client
 client = MongoClient(MONGO_URI)
 db = client[DATABASE_NAME]
 complaints_collection = db[COLLECTION_NAME]

@@ -4,13 +4,13 @@ from pydantic import BaseModel, Field, ConfigDict
 class ComplaintSubmitRequest(BaseModel):
     """Request model for submitting a new complaint"""
     complaint_text: str
-    source: str  # Email | Call | Manual
+    source: str
     customer_name: str
 
 
 class ComplaintUpdateRequest(BaseModel):
     """Request model for updating complaint status"""
-    status: str  # New | In Progress | Resolved
+    status: str
 
 
 class ComplaintResponse(BaseModel):

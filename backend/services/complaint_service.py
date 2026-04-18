@@ -19,13 +19,10 @@ def process_complaint(text: str) -> dict:
     """
     text_lower = text.lower()
     
-    # Category classification
     category = classify_category(text_lower)
-    
-    # Priority classification
+
     priority = classify_priority(text_lower)
-    
-    # Get recommendation based on category and priority
+
     recommendation = get_recommendation(category, priority)
     
     return {
@@ -44,22 +41,18 @@ def classify_category(text: str) -> str:
     - Packaging Issue: Leak, damaged, torn, broken (packaging/delivery)
     - Trade Inquiry: Distributor, wholesale, bulk order, reseller
     """
-    # Trade Inquiry keywords
     trade_keywords = ["distributor", "wholesale", "bulk order", "reseller", "retailer", "supplier", "vendor"]
     if any(keyword in text for keyword in trade_keywords):
         return "Trade Inquiry"
-    
-    # Packaging Issue keywords
+
     packaging_keywords = ["leak", "damaged", "torn", "dent", "broken packaging", "broken seal", "wet"]
     if any(keyword in text for keyword in packaging_keywords):
         return "Packaging Issue"
-    
-    # Product Issue keywords
+
     product_keywords = ["defective", "not working", "faulty", "malfunction", "broken product", "not functional", "quality"]
     if any(keyword in text for keyword in product_keywords):
         return "Product Issue"
-    
-    # Default to Product Issue
+
     return "Product Issue"
 
 
@@ -74,17 +67,14 @@ def classify_priority(text: str) -> str:
     """
     text_lower = text.lower()
     
-    # High priority keywords
     high_keywords = ["safety", "damaged", "leak", "dangerous", "critical", "urgent", "emergency", "broken", "defective"]
     if any(keyword in text_lower for keyword in high_keywords):
         return "High"
-    
-    # Medium priority keywords
+
     medium_keywords = ["inconvenience", "wrong", "incorrect", "issue", "problem", "concern", "complaint"]
     if any(keyword in text_lower for keyword in medium_keywords):
         return "Medium"
-    
-    # Default to Low priority
+
     return "Low"
 
 
@@ -115,7 +105,7 @@ def get_recommendation(category: str, priority: str) -> str:
         elif category == "Trade Inquiry":
             return "Forward to sales team"
     
-    else:  # Low priority
+    else:
         if category == "Trade Inquiry":
             return "Forward to sales team"
         else:

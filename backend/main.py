@@ -22,17 +22,15 @@ from database import (
 )
 from services.complaint_service import process_complaint
 
-# Initialize FastAPI app
 app = FastAPI(
     title="QuickResolveAI",
     description="AI Powered Complaint Classification & Resolution System",
     version="1.0.0",
 )
 
-# Enable CORS for React frontend
 origins = [
     "http://localhost:3000",
-    "http://localhost:5173",  # Vite default port
+    "http://localhost:5173",
     "http://127.0.0.1:3000",
     "http://127.0.0.1:5173",
 ]
@@ -45,9 +43,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-# Startup event
 @app.on_event("startup")
 def startup():
     """Create database indexes on startup"""
@@ -55,14 +50,11 @@ def startup():
     print("✓ Backend started successfully")
 
 
-# Health check endpoint
 @app.get("/health", tags=["Health"])
 def health_check():
     """Check if backend is running"""
     return {"status": "healthy", "service": "QuickResolveAI"}
 
-
-# ==================== COMPLAINT ENDPOINTS ====================
 
 @app.post("/complaint", response_model=ComplaintResponse, tags=["Complaints"])
 def submit_complaint(request: ComplaintSubmitRequest):
@@ -75,10 +67,8 @@ def submit_complaint(request: ComplaintSubmitRequest):
     try:
         collection = get_complaints_collection()
         
-        # Process complaint text using complaint service
         classification_result = process_complaint(request.complaint_text)
-        
-        # Create complaint document
+
         complaint_doc = {
             "complaint_text": request.complaint_text,
             "category": classification_result["category"],
@@ -89,11 +79,8 @@ def submit_complaint(request: ComplaintSubmitRequest):
             "customer_name": request.customer_name,
             "created_at": datetime.utcnow().isoformat(),
         }
-        
-        # Insert into MongoDB
         result = collection.insert_one(complaint_doc)
-        
-        # Return the created complaint
+
         complaint_doc["_id"] = result.inserted_id
         return convert_objectid_to_string(complaint_doc)
     
@@ -114,11 +101,8 @@ def get_all_complaints():
     """
     try:
         collection = get_complaints_collection()
-        
-        # Fetch all complaints, sorted by creation date (newest first)
         complaints = list(collection.find({}).sort("created_at", -1))
-        
-        # Convert ObjectId to string
+
         complaints_converted = convert_objectid_in_list(complaints)
         
         return complaints_converted
@@ -139,15 +123,12 @@ def update_complaint_status(complaint_id: str, request: ComplaintUpdateRequest):
     """
     try:
         collection = get_complaints_collection()
-        
-        # Validate complaint ID
         if not ObjectId.is_valid(complaint_id):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Invalid complaint ID format"
             )
-        
-        # Update status
+
         result = collection.find_one_and_update(
             {"_id": ObjectId(complaint_id)},
             {"$set": {"status": request.status}},
@@ -171,8 +152,6 @@ def update_complaint_status(complaint_id: str, request: ComplaintUpdateRequest):
         )
 
 
-# ==================== ANALYTICS ENDPOINTS ====================
-
 @app.get("/dashboard", response_model=DashboardStats, tags=["Analytics"])
 def get_dashboard_stats():
     """
@@ -182,16 +161,12 @@ def get_dashboard_stats():
     """
     try:
         collection = get_complaints_collection()
-        
-        # Count total complaints
         total_complaints = collection.count_documents({})
-        
-        # Count by priority
+
         high_priority = collection.count_documents({"priority": "High"})
         medium_priority = collection.count_documents({"priority": "Medium"})
         low_priority = collection.count_documents({"priority": "Low"})
-        
-        # Count by status
+
         resolved = collection.count_documents({"status": "Resolved"})
         pending = total_complaints - resolved
         
@@ -211,8 +186,6 @@ def get_dashboard_stats():
         )
 
 
-# ==================== ROOT ENDPOINT ====================
-
 @app.get("/", tags=["Root"])
 def root():
     """Welcome message"""
@@ -225,6 +198,5 @@ def root():
 
 if __name__ == "__main__":
     import uvicorn
-    
-    # Run with: uvicorn main:app --reload
+
     uvicorn.run(app, host="0.0.0.0", port=8000)
