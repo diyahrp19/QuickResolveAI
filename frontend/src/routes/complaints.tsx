@@ -321,7 +321,7 @@ function DeleteDialog({
 
   return (
     <Dialog open={!!complaint} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-sm gap-0 overflow-hidden p-0 sm:rounded-2xl">
+      <DialogContent className="max-h-[85vh] max-w-sm gap-0 overflow-y-auto p-0 sm:rounded-2xl">
         <div className="border-b border-border/80 bg-destructive/10 px-4 py-3">
           <DialogHeader className="space-y-1 text-left">
             <DialogTitle className="text-base font-semibold">Delete complaint?</DialogTitle>
@@ -334,7 +334,7 @@ function DeleteDialog({
         <div className="space-y-3 px-4 py-4">
           <div className="rounded-xl border border-border/80 bg-secondary/40 px-3 py-2.5">
             <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Complaint</p>
-            <p className="mt-1 truncate text-sm font-medium">{c.text}</p>
+            <p className="mt-1 text-sm font-medium break-words">{c.text}</p>
             <p className="mt-1 text-xs text-muted-foreground">Customer: {c.customer}</p>
           </div>
         </div>

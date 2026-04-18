@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic import BaseModel, Field, ConfigDict
 
 
@@ -6,6 +8,30 @@ class ComplaintSubmitRequest(BaseModel):
     complaint_text: str
     source: str
     customer_name: str
+
+
+class ComplaintAnalysisRequest(BaseModel):
+    """Request model for AI complaint analysis"""
+
+    complaint: str = Field(min_length=1)
+
+
+class ComplaintAnalysisResponse(BaseModel):
+    """Structured AI analysis response model"""
+
+    category: Literal["Product Issue", "Packaging Issue", "Trade Inquiry"]
+    priority: Literal["High", "Medium", "Low"]
+    recommendation: str
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "category": "Packaging Issue",
+                "priority": "High",
+                "recommendation": "Replace the product and escalate the issue to the quality assurance team.",
+            }
+        }
+    )
 
 
 class ComplaintUpdateRequest(BaseModel):

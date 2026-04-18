@@ -27,6 +27,16 @@ export interface ComplaintSubmitPayload {
   customer_name: string;
 }
 
+export interface ComplaintAnalysisPayload {
+  complaint: string;
+}
+
+export interface ComplaintAnalysisResponse {
+  category: Category;
+  priority: Priority;
+  recommendation: string;
+}
+
 export interface ComplaintUpdatePayload {
   status: Status;
 }
@@ -83,6 +93,11 @@ export const api = {
     me: () => request<AuthUser>("/auth/me"),
   },
   complaints: {
+    analyze: (payload: ComplaintAnalysisPayload) =>
+      request<ComplaintAnalysisResponse>("/api/analyze-complaint", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
     list: () => request<ComplaintApiResponse[]>("/complaints"),
     create: (payload: ComplaintSubmitPayload) =>
       request<ComplaintApiResponse>("/complaint", {

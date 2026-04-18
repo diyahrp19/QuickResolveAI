@@ -9,6 +9,8 @@ from datetime import datetime
 from bson import ObjectId
 
 from models import (
+    ComplaintAnalysisRequest,
+    ComplaintAnalysisResponse,
     ComplaintSubmitRequest,
     ComplaintUpdateRequest,
     ComplaintResponse,
@@ -24,7 +26,7 @@ from database import (
     convert_objectid_in_list,
     create_indexes,
 )
-from services.complaint_service import process_complaint
+from services.ai_analysis_service import analyze_complaint_text
 from services.auth_service import (
     authenticate_user,
     create_access_token,
@@ -138,7 +140,7 @@ def submit_complaint(
         current_user = _require_authenticated_user(authorization)
         collection = get_complaints_collection()
         
-        classification_result = process_complaint(request.complaint_text)
+        classification_result = analyze_complaint_text(request.complaint_text)
 
         complaint_doc = {
             "complaint_text": request.complaint_text,
@@ -160,6 +162,28 @@ def submit_complaint(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error submitting complaint: {str(e)}"
+        )
+
+
+@app.post(
+    "/api/analyze-complaint",
+    response_model=ComplaintAnalysisResponse,
+    tags=["AI Analysis"],
+)
+def analyze_complaint(request: ComplaintAnalysisRequest):
+    """Analyze complaint text with AI and return structured classification."""
+    try:
+        result = analyze_complaint_text(request.complaint)
+        return ComplaintAnalysisResponse(**result)
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e),
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error analyzing complaint: {str(e)}",
         )
 
 

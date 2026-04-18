@@ -15,6 +15,7 @@ import {
 import { PriorityBadge } from "@/components/Badges";
 import { type Category, type Priority, type Source } from "@/lib/mock-data";
 import { complaintsStore } from "@/lib/complaints-store";
+import { api } from "@/lib/api";
 import { Bot, Send, Sparkles, Tag, Lightbulb } from "lucide-react";
 import { toast } from "sonner";
 
@@ -36,6 +37,8 @@ function SubmitPage() {
   const [source, setSource] = useState<Source>("Email");
   const [customer, setCustomer] = useState("");
   const [analyzing, setAnalyzing] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [analyzedForText, setAnalyzedForText] = useState("");
   const [result, setResult] = useState<{
     category: Category;
     priority: Priority;
@@ -48,27 +51,33 @@ function SubmitPage() {
       toast.error("Please fill out all fields");
       return;
     }
-    setAnalyzing(true);
-    setResult(null);
+    const complaint = text.trim();
+    setSubmitting(true);
     try {
+      let analyzed = result;
+      if (!analyzed || analyzedForText !== complaint) {
+        setAnalyzing(true);
+        analyzed = await api.complaints.analyze({ complaint });
+        setResult(analyzed);
+        setAnalyzedForText(complaint);
+      }
+
       const created = await complaintsStore.add({
-        text,
+        text: complaint,
         customer,
         source,
       });
-      setResult({
-        category: created.category,
-        priority: created.priority,
-        recommendation: created.recommendation,
-      });
+
       toast.success(`Complaint submitted for ${customer}`);
       setText("");
       setCustomer("");
       setSource("Email");
+      setAnalyzedForText("");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to submit complaint");
     } finally {
       setAnalyzing(false);
+      setSubmitting(false);
     }
   };
 
@@ -130,7 +139,13 @@ function SubmitPage() {
             <Textarea
               id="text"
               value={text}
-              onChange={(e) => setText(e.target.value)}
+              onChange={(e) => {
+                const next = e.target.value;
+                setText(next);
+                if (result && analyzedForText && next.trim() !== analyzedForText) {
+                  setResult(null);
+                }
+              }}
               placeholder="Describe the issue in detail..."
               rows={6}
             />
@@ -140,13 +155,13 @@ function SubmitPage() {
             <Button
               type="submit"
               size="lg"
-              disabled={analyzing}
+              disabled={analyzing || submitting}
               className="bg-gradient-primary hover:opacity-95 shadow-glow"
             >
-              {analyzing ? (
+              {submitting ? (
                 <>
                   <Bot className="h-4 w-4 mr-2 animate-pulse" />
-                  Analyzing...
+                  Submitting...
                 </>
               ) : (
                 <>
@@ -186,6 +201,7 @@ function SubmitPage() {
                 icon={<Lightbulb className="h-4 w-4" />}
                 label="Recommendation"
                 value={result.recommendation}
+                className="md:col-span-3"
               />
             </div>
           </div>
@@ -195,9 +211,21 @@ function SubmitPage() {
   );
 }
 
-function InfoTile({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+function InfoTile({
+  icon,
+  label,
+  value,
+  className,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  className?: string;
+}) {
   return (
-    <div className="rounded-2xl bg-card/80 border border-border/80 p-4 shadow-soft">
+    <div
+      className={`rounded-2xl bg-card/80 border border-border/80 p-4 shadow-soft ${className ?? ""}`}
+    >
       <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
         {icon} {label}
       </div>
