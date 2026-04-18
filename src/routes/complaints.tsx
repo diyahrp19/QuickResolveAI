@@ -1,0 +1,207 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
+import { AppShell } from "@/components/layout/AppShell";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { PriorityBadge, StatusBadge } from "@/components/Badges";
+import { complaintsStore, useComplaints } from "@/lib/complaints-store";
+import type { Complaint, Status } from "@/lib/mock-data";
+import { Search, Eye, Clock } from "lucide-react";
+
+export const Route = createFileRoute("/complaints")({
+  head: () => ({
+    meta: [
+      { title: "Complaint Management – QuickResolveAI" },
+      { name: "description", content: "Manage, filter and update the status of complaints." },
+    ],
+  }),
+  component: ComplaintsPage,
+});
+
+function ComplaintsPage() {
+  const all = useComplaints();
+  const [q, setQ] = useState("");
+  const [cat, setCat] = useState("all");
+  const [pri, setPri] = useState("all");
+  const [stat, setStat] = useState("all");
+  const [active, setActive] = useState<Complaint | null>(null);
+
+  const filtered = useMemo(() => {
+    return all.filter((c) => {
+      if (q && !`${c.id} ${c.text} ${c.customer}`.toLowerCase().includes(q.toLowerCase())) return false;
+      if (cat !== "all" && c.category !== cat) return false;
+      if (pri !== "all" && c.priority !== pri) return false;
+      if (stat !== "all" && c.status !== stat) return false;
+      return true;
+    });
+  }, [all, q, cat, pri, stat]);
+
+  return (
+    <AppShell>
+      <div className="space-y-6">
+        <div>
+          <h1 className="font-display text-3xl font-bold">Complaint Management</h1>
+          <p className="text-muted-foreground mt-1">Search, filter and manage all incoming complaints.</p>
+        </div>
+
+        <div className="rounded-2xl border border-border bg-card p-4 shadow-soft">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
+            <div className="md:col-span-5 relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search by ID, text or customer..." className="pl-9" />
+            </div>
+            <Filter value={cat} onChange={setCat} placeholder="Category" options={["Product Issue", "Packaging Issue", "Trade Inquiry"]} />
+            <Filter value={pri} onChange={setPri} placeholder="Priority" options={["High", "Medium", "Low"]} />
+            <Filter value={stat} onChange={setStat} placeholder="Status" options={["New", "In Progress", "Resolved"]} />
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-border bg-card shadow-soft overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-secondary/60 text-xs uppercase tracking-wider text-muted-foreground">
+                <tr>
+                  <Th>ID</Th>
+                  <Th>Complaint</Th>
+                  <Th>Category</Th>
+                  <Th>Priority</Th>
+                  <Th>Status</Th>
+                  <Th>Created</Th>
+                  <Th className="text-right">Actions</Th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((c) => (
+                  <tr key={c.id} className="border-t border-border hover:bg-secondary/40 transition-colors">
+                    <td className="px-4 py-3 font-mono text-xs font-semibold text-primary">{c.id}</td>
+                    <td className="px-4 py-3 max-w-xs truncate">{c.text}</td>
+                    <td className="px-4 py-3 text-muted-foreground">{c.category}</td>
+                    <td className="px-4 py-3"><PriorityBadge priority={c.priority} /></td>
+                    <td className="px-4 py-3">
+                      <Select value={c.status} onValueChange={(v) => complaintsStore.updateStatus(c.id, v as Status)}>
+                        <SelectTrigger className="h-8 w-36"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="New">New</SelectItem>
+                          <SelectItem value="In Progress">In Progress</SelectItem>
+                          <SelectItem value="Resolved">Resolved</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground text-xs">{new Date(c.createdAt).toLocaleDateString()}</td>
+                    <td className="px-4 py-3 text-right">
+                      <button
+                        onClick={() => setActive(c)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-secondary hover:bg-accent text-xs font-medium transition-colors"
+                      >
+                        <Eye className="h-3.5 w-3.5" /> View
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                {filtered.length === 0 && (
+                  <tr><td colSpan={7} className="px-4 py-12 text-center text-muted-foreground">No complaints match your filters.</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <DetailDialog complaint={active} onClose={() => setActive(null)} />
+    </AppShell>
+  );
+}
+
+function Th({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return <th className={`px-4 py-3 text-left font-semibold ${className}`}>{children}</th>;
+}
+
+function Filter({ value, onChange, placeholder, options }: { value: string; onChange: (v: string) => void; placeholder: string; options: string[] }) {
+  return (
+    <div className="md:col-span-2">
+      <Select value={value} onValueChange={onChange}>
+        <SelectTrigger><SelectValue placeholder={placeholder} /></SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">All {placeholder}</SelectItem>
+          {options.map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
+
+function DetailDialog({ complaint, onClose }: { complaint: Complaint | null; onClose: () => void }) {
+  if (!complaint) return null;
+  const c = complaint;
+  return (
+    <Dialog open={!!complaint} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle className="font-display flex items-center gap-2">
+            <span className="font-mono text-sm text-primary">{c.id}</span>
+            <span>·</span>
+            <span>{c.customer}</span>
+          </DialogTitle>
+        </DialogHeader>
+        <div className="space-y-5">
+          <div className="rounded-xl bg-secondary/60 p-4">
+            <p className="text-xs uppercase text-muted-foreground mb-1">Complaint</p>
+            <p className="text-sm">{c.text}</p>
+          </div>
+
+          <div className="grid grid-cols-3 gap-3">
+            <Mini label="Category" value={c.category} />
+            <div>
+              <p className="text-xs text-muted-foreground mb-1">Priority</p>
+              <PriorityBadge priority={c.priority} />
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground mb-1">Status</p>
+              <StatusBadge status={c.status} />
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
+            <p className="text-xs uppercase text-primary font-semibold mb-1">AI Recommendation</p>
+            <p className="text-sm">{c.recommendation}</p>
+          </div>
+
+          <div>
+            <p className="text-xs uppercase text-muted-foreground mb-3">Timeline</p>
+            <ol className="space-y-3 border-l-2 border-border ml-2">
+              {c.timeline.map((t, i) => (
+                <li key={i} className="relative pl-5">
+                  <span className="absolute -left-[7px] top-1.5 h-3 w-3 rounded-full bg-gradient-primary" />
+                  <p className="text-sm font-medium">{t.label}</p>
+                  <p className="text-xs text-muted-foreground flex items-center gap-1"><Clock className="h-3 w-3" />{new Date(t.ts).toLocaleString()}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+
+          <div>
+            <p className="text-xs uppercase text-muted-foreground mb-2">Update Status</p>
+            <Select value={c.status} onValueChange={(v) => complaintsStore.updateStatus(c.id, v as Status)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="New">New</SelectItem>
+                <SelectItem value="In Progress">In Progress</SelectItem>
+                <SelectItem value="Resolved">Resolved</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function Mini({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <p className="text-xs text-muted-foreground mb-1">{label}</p>
+      <p className="text-sm font-medium">{value}</p>
+    </div>
+  );
+}
