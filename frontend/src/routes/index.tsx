@@ -20,7 +20,6 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Dashboard – QuickResolveAI" },
       {
         name: "description",
         content: "Overview of complaint volume, priority and resolution status.",

@@ -7,10 +7,7 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/reports")({
   head: () => ({
-    meta: [
-      { title: "Reports – QuickResolveAI" },
-      { name: "description", content: "Export complaint data and view summary reports." },
-    ],
+    meta: [{ name: "description", content: "Export complaint data and view summary reports." }],
   }),
   component: ReportsPage,
 });

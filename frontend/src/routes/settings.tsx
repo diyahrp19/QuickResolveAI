@@ -4,10 +4,7 @@ import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({
-    meta: [
-      { title: "Settings – QuickResolveAI" },
-      { name: "description", content: "Account settings and preferences." },
-    ],
+    meta: [{ name: "description", content: "Account settings and preferences." }],
   }),
   component: SettingsPage,
 });

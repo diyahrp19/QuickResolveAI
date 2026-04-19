@@ -13,10 +13,7 @@ export const Route = createFileRoute("/profile")({
     }
   },
   head: () => ({
-    meta: [
-      { title: "Profile – QuickResolveAI" },
-      { name: "description", content: "View the authenticated user profile." },
-    ],
+    meta: [{ name: "description", content: "View the authenticated user profile." }],
   }),
   component: ProfilePage,
 });

@@ -22,7 +22,6 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/submit")({
   head: () => ({
     meta: [
-      { title: "Submit Complaint – QuickResolveAI" },
       {
         name: "description",
         content: "Submit a customer complaint for instant AI classification and resolution.",

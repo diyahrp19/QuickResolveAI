@@ -25,10 +25,7 @@ import { Search, Eye, Clock, Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/complaints")({
   head: () => ({
-    meta: [
-      { title: "Complaint Management – QuickResolveAI" },
-      { name: "description", content: "Manage, filter and update the status of complaints." },
-    ],
+    meta: [{ name: "description", content: "Manage, filter and update the status of complaints." }],
   }),
   component: ComplaintsPage,
 });

@@ -9,10 +9,7 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
-    meta: [
-      { title: "Login – QuickResolveAI" },
-      { name: "description", content: "Sign in to QuickResolveAI." },
-    ],
+    meta: [{ name: "description", content: "Sign in to QuickResolveAI." }],
   }),
   component: LoginPage,
 });
