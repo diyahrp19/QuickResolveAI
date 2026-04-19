@@ -63,6 +63,7 @@ function ComplaintsPage() {
     <AppShell>
       <div className="space-y-6 animate-enter">
         <div>
+          <p className="title-kicker">Operations</p>
           <h1 className="font-display text-3xl md:text-4xl font-bold tracking-tight">
             Complaint Management
           </h1>
@@ -71,7 +72,7 @@ function ComplaintsPage() {
           </p>
         </div>
 
-        <div className="rounded-3xl border border-border/80 glass-card p-4 shadow-soft surface-ring">
+        <div className="rounded-3xl section-panel p-4 shadow-soft surface-ring">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
             <div className="md:col-span-5 relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -103,7 +104,7 @@ function ComplaintsPage() {
           </div>
         </div>
 
-        <div className="rounded-3xl border border-border/80 glass-card shadow-soft overflow-hidden surface-ring">
+        <div className="rounded-3xl section-panel shadow-soft overflow-hidden surface-ring">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="sticky top-0 z-10 bg-secondary/78 backdrop-blur-lg text-xs uppercase tracking-[0.11em] text-muted-foreground">
@@ -334,7 +335,7 @@ function DeleteDialog({
         <div className="space-y-3 px-4 py-4">
           <div className="rounded-xl border border-border/80 bg-secondary/40 px-3 py-2.5">
             <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Complaint</p>
-            <p className="mt-1 text-sm font-medium break-words">{c.text}</p>
+            <p className="mt-1 text-sm font-medium wrap-break-word">{c.text}</p>
             <p className="mt-1 text-xs text-muted-foreground">Customer: {c.customer}</p>
           </div>
         </div>

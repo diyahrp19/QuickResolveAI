@@ -50,12 +50,16 @@ function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background px-4 py-8 flex items-center justify-center">
-      <div className="w-full max-w-md rounded-3xl border border-border bg-card p-8 shadow-soft">
+    <div className="relative min-h-screen overflow-hidden bg-background px-4 py-8 flex items-center justify-center">
+      <div className="ambient-orb -left-25 top-20 h-64 w-64 bg-primary/18" />
+      <div className="ambient-orb -right-22.5 bottom-7.5 h-72 w-72 bg-accent/22" />
+      <div className="relative w-full max-w-md rounded-3xl border border-border/80 section-panel p-8 shadow-soft">
+        <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-linear-to-r from-transparent via-white/55 to-transparent" />
         <div className="mb-8 text-center">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-primary">
             <Bot className="h-7 w-7 text-primary-foreground" />
           </div>
+          <p className="title-kicker">Welcome Back</p>
           <h1 className="font-display text-3xl font-bold">Sign in</h1>
           <p className="mt-2 text-sm text-muted-foreground">Access your QuickResolveAI profile.</p>
         </div>

@@ -85,6 +85,7 @@ function SubmitPage() {
     <AppShell>
       <div className="max-w-4xl mx-auto space-y-8">
         <div>
+          <p className="title-kicker">Intake</p>
           <h1 className="font-display text-3xl md:text-4xl font-bold tracking-tight">
             Submit Complaint
           </h1>
@@ -95,7 +96,7 @@ function SubmitPage() {
 
         <form
           onSubmit={onSubmit}
-          className="rounded-3xl border border-border/80 glass-card shadow-soft p-6 md:p-8 space-y-6"
+          className="rounded-3xl section-panel border border-black/20 shadow-soft p-6 md:p-8 space-y-6"
         >
           <div className="grid md:grid-cols-2 gap-5">
             <div className="space-y-2">
@@ -174,7 +175,7 @@ function SubmitPage() {
         </form>
 
         {result && (
-          <div className="rounded-3xl border border-primary/25 bg-linear-to-br from-primary/10 via-card/85 to-transparent p-6 md:p-8 shadow-md animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="rounded-3xl border border-black/20 bg-linear-to-br from-primary/10 via-card/85 to-transparent p-6 md:p-8 shadow-md animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="flex items-center gap-2 mb-5">
               <div className="h-10 w-10 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-glow">
                 <Sparkles className="h-4 w-4 text-primary-foreground" />
@@ -191,7 +192,7 @@ function SubmitPage() {
                 label="Category"
                 value={result.category}
               />
-              <div className="rounded-2xl bg-card/80 border border-border/80 p-4 shadow-soft">
+              <div className="rounded-2xl bg-card/80 border border-black/20 p-4 shadow-soft">
                 <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
                   <Sparkles className="h-4 w-4" /> Priority
                 </div>
@@ -224,7 +225,7 @@ function InfoTile({
 }) {
   return (
     <div
-      className={`rounded-2xl bg-card/80 border border-border/80 p-4 shadow-soft ${className ?? ""}`}
+      className={`rounded-2xl bg-card/80 border border-black/20 p-4 shadow-soft ${className ?? ""}`}
     >
       <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
         {icon} {label}

@@ -34,13 +34,13 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        "relative hidden md:flex shrink-0 flex-col border-r border-sidebar-border/80 bg-sidebar/95 backdrop-blur-xl transition-all duration-300",
+        "relative z-30 m-3 hidden md:flex h-[calc(100vh-1.5rem)] shrink-0 flex-col rounded-3xl border border-sidebar-border/80 bg-sidebar/92 shadow-glass backdrop-blur-xl transition-all duration-300",
         collapsed ? "w-20" : "w-72",
       )}
     >
       <div
         className={cn(
-          "h-16 border-b border-sidebar-border/80 flex items-center",
+          "h-18 border-b border-sidebar-border/80 flex items-center",
           collapsed ? "justify-center px-2" : "justify-between px-5",
         )}
       >
@@ -74,7 +74,7 @@ export function Sidebar() {
             type="button"
             onClick={toggle}
             aria-label="Expand sidebar"
-            className="absolute top-20 left-1/2 -translate-x-1/2 h-9 w-9 rounded-xl border border-sidebar-border/80 bg-card/70 text-sidebar-foreground flex items-center justify-center hover:bg-sidebar-accent/65"
+            className="absolute left-1/2 top-[5.3rem] -translate-x-1/2 h-9 w-9 rounded-xl border border-sidebar-border/80 bg-card/70 text-sidebar-foreground flex items-center justify-center hover:bg-sidebar-accent/65"
           >
             <PanelLeftOpen className="h-4 w-4" />
           </button>

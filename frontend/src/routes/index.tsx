@@ -62,6 +62,7 @@ function Dashboard() {
     <AppShell>
       <div className="space-y-8 animate-enter">
         <div>
+          <p className="title-kicker">Control Center</p>
           <h1 className="font-display text-3xl md:text-4xl font-bold tracking-tight">Dashboard</h1>
           <p className="text-muted-foreground mt-1.5 text-sm md:text-base">
             QuickResolveAI – AI Powered Complaint Classification &amp; Resolution System
@@ -177,7 +178,7 @@ function Dashboard() {
           </ChartCard>
         </div>
 
-        <div className="rounded-3xl border border-border/80 glass-card p-6 shadow-soft">
+        <div className="rounded-3xl section-panel p-6 shadow-soft">
           <h3 className="font-display text-lg font-semibold mb-4 tracking-tight">
             Recent Complaints
           </h3>
@@ -226,7 +227,7 @@ function ChartCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-3xl border border-border/80 glass-card p-6 shadow-soft hover-lift">
+    <div className="rounded-3xl section-panel p-6 shadow-soft hover-lift">
       <div className="mb-4">
         <h3 className="font-display text-base font-semibold tracking-tight">{title}</h3>
         {subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}

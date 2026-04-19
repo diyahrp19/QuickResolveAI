@@ -84,10 +84,10 @@ function ReportsPage() {
           </p>
         </div>
 
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-primary p-8 text-primary-foreground shadow-glow">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_10%_20%,rgba(255,255,255,0.22),transparent_46%),radial-gradient(circle_at_90%_10%,rgba(255,255,255,0.18),transparent_40%)]" />
+        <div className="relative overflow-hidden rounded-3xl border border-cyan-800/35 bg-linear-to-r from-sky-600/95 via-cyan-600/93 to-emerald-600/91 p-8 text-sky-50 shadow-glow">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_10%_20%,rgba(255,255,255,0.22),transparent_46%),radial-gradient(circle_at_90%_10%,rgba(255,255,255,0.14),transparent_40%)]" />
           <div className="relative flex items-center gap-3 mb-4">
-            <TrendingUp className="h-6 w-6" />
+            <TrendingUp className="h-6 w-6 text-cyan-100" />
             <h2 className="font-display text-xl font-bold">Summary Report</h2>
           </div>
           <div className="relative grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -123,8 +123,8 @@ function ReportsPage() {
 function Stat({ label, value }: { label: string; value: string | number }) {
   return (
     <div>
-      <p className="text-xs uppercase tracking-[0.11em] opacity-80">{label}</p>
-      <p className="font-display text-3xl font-bold mt-1">{value}</p>
+      <p className="text-xs uppercase tracking-[0.11em] text-sky-100/80">{label}</p>
+      <p className="font-display text-3xl font-bold mt-1 text-sky-50">{value}</p>
     </div>
   );
 }
@@ -141,12 +141,12 @@ function ExportCard({
   onClick: () => void;
 }) {
   return (
-    <div className="rounded-3xl border border-border/80 glass-card p-6 shadow-soft hover-lift">
-      <div className="h-12 w-12 rounded-2xl bg-linear-to-br from-primary/20 to-primary/8 text-primary flex items-center justify-center mb-4 shadow-soft">
+    <div className="rounded-3xl border border-border/75 bg-card/90 p-6 shadow-soft hover-lift surface-ring">
+      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-linear-to-br from-primary/20 to-accent/24 text-primary shadow-soft">
         <Icon className="h-6 w-6" />
       </div>
       <h3 className="font-display font-semibold text-lg tracking-tight">{title}</h3>
-      <p className="text-sm text-muted-foreground mt-1 mb-4">{desc}</p>
+      <p className="mt-1 mb-4 text-sm text-muted-foreground">{desc}</p>
       <Button onClick={onClick} className="bg-gradient-primary hover:opacity-95">
         <Download className="h-4 w-4 mr-2" /> Download
       </Button>
