@@ -52,9 +52,19 @@ function SignupPage() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-background px-4 py-8 flex items-center justify-center">
-      <div className="ambient-orb -left-25 bottom-10 h-64 w-64 bg-accent/22" />
-      <div className="ambient-orb -right-30 top-17.5 h-72 w-72 bg-primary/18" />
-      <div className="relative w-full max-w-md rounded-3xl border border-border/80 section-panel p-8 shadow-soft">
+      <div className="auth-glow" />
+      <div className="auth-bubble auth-bubble-accent -left-14 bottom-7 h-58 w-58" />
+      <div className="auth-bubble auth-bubble-primary auth-delay-1 -right-14 top-12 h-72 w-72" />
+      <div className="auth-bubble auth-bubble-accent auth-bubble-soft auth-delay-2 left-18 top-16 h-22 w-22" />
+      <div className="auth-bubble auth-bubble-primary auth-bubble-soft auth-delay-3 right-24 bottom-14 h-20 w-20" />
+      <div className="auth-bubble auth-bubble-blush auth-bubble-soft auth-delay-1 left-34 bottom-24 h-14 w-14" />
+      <div className="auth-bubble auth-bubble-sky auth-bubble-soft auth-delay-2 right-38 top-30 h-16 w-16" />
+      <div className="auth-bubble auth-bubble-primary auth-bubble-soft auth-delay-3 left-1/2 bottom-8 h-12 w-12 -translate-x-1/2" />
+      <div className="auth-bubble auth-bubble-blush auth-delay-2 right-12 bottom-32 h-20 w-20" />
+      <div className="auth-bubble auth-bubble-sky auth-bubble-soft auth-delay-1 left-12 top-30 h-12 w-12" />
+      <div className="auth-ring left-8 bottom-6 h-72 w-72" />
+      <div className="auth-ring auth-delay-2 right-10 top-8 h-80 w-80" />
+      <div className="relative z-10 w-full max-w-md rounded-3xl border border-border/80 section-panel p-8 shadow-soft">
         <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-linear-to-r from-transparent via-white/55 to-transparent" />
         <div className="mb-8 text-center">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-primary">

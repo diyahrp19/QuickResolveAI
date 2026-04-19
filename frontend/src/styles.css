@@ -369,6 +369,74 @@
     filter: blur(2px);
     animation: float-orb 9s ease-in-out infinite;
   }
+  .auth-bubble {
+    position: absolute;
+    border-radius: 9999px;
+    pointer-events: none;
+    opacity: 0.66;
+    filter: saturate(108%);
+    z-index: 0;
+    animation: auth-float 11s ease-in-out infinite;
+  }
+  .auth-bubble-primary {
+    background: color-mix(in oklch, var(--color-primary) 62%, white 38%);
+  }
+  .auth-bubble-accent {
+    background: color-mix(in oklch, var(--color-accent) 58%, white 42%);
+  }
+  .auth-bubble-soft {
+    opacity: 0.5;
+    filter: blur(1px) saturate(102%);
+  }
+  .auth-bubble-blush {
+    background: color-mix(in oklch, oklch(0.78 0.08 20) 60%, white 40%);
+  }
+  .auth-bubble-sky {
+    background: color-mix(in oklch, oklch(0.72 0.09 228) 60%, white 40%);
+  }
+  .auth-ring {
+    position: absolute;
+    border-radius: 9999px;
+    pointer-events: none;
+    border: 1px solid color-mix(in oklch, var(--color-foreground) 20%, transparent);
+    opacity: 0.31;
+    z-index: 0;
+    animation: auth-pulse 7s ease-in-out infinite;
+  }
+  .auth-glow {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image:
+      radial-gradient(
+        circle at 16% 24%,
+        color-mix(in oklch, var(--color-primary) 24%, white 18%),
+        transparent 40%
+      ),
+      radial-gradient(
+        circle at 84% 76%,
+        color-mix(in oklch, var(--color-accent) 22%, white 24%),
+        transparent 44%
+      ),
+      radial-gradient(
+        circle at 72% 18%,
+        color-mix(in oklch, oklch(0.9 0.05 12) 18%, white 26%),
+        transparent 40%
+      );
+    filter: blur(28px);
+    opacity: 0.56;
+    animation: auth-shift 13s ease-in-out infinite;
+  }
+  .auth-delay-1 {
+    animation-delay: -1.7s;
+  }
+  .auth-delay-2 {
+    animation-delay: -3.2s;
+  }
+  .auth-delay-3 {
+    animation-delay: -4.6s;
+  }
   .section-panel {
     background-image: var(--gradient-card);
     border: 1px solid color-mix(in oklch, var(--color-border) 74%, transparent);
@@ -425,6 +493,38 @@
   }
   50% {
     transform: translateY(-12px) scale(1.04);
+  }
+}
+
+@keyframes auth-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(0, -12px, 0) scale(1.05);
+  }
+}
+
+@keyframes auth-pulse {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.34;
+    transform: scale(1.03);
+  }
+}
+
+@keyframes auth-shift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -10px, 0);
   }
 }
 

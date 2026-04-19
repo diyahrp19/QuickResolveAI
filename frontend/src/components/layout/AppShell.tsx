@@ -6,11 +6,6 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="relative flex min-h-screen w-full bg-transparent">
       <div className="mesh-overlay" />
-      <div className="ambient-orb -left-35 top-30 h-72 w-72 bg-primary/20" />
-      <div
-        className="ambient-orb -right-30 top-[56%] h-80 w-80 bg-accent/22"
-        style={{ animationDelay: "-2.8s" }}
-      />
       <Sidebar />
       <div className="relative flex-1 flex flex-col min-w-0 md:pl-1">
         <Header />
