@@ -4,10 +4,10 @@ import { cn } from "@/lib/utils";
 
 export function PriorityBadge({ priority }: { priority: Priority }) {
   const map: Record<Priority, string> = {
-    High: "bg-destructive/10 text-destructive border-destructive/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.4)]",
+    High: "bg-destructive/8 text-destructive border-destructive/24 shadow-[inset_0_1px_0_rgba(255,255,255,0.28)]",
     Medium:
-      "bg-amber-50/85 text-amber-700 border-amber-200/85 dark:bg-amber-200/12 dark:text-amber-100 dark:border-amber-200/24 shadow-[inset_0_1px_0_rgba(255,255,255,0.32)]",
-    Low: "bg-success/12 text-success border-success/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]",
+      "bg-warning/14 text-warning-foreground border-warning/28 shadow-[inset_0_1px_0_rgba(255,255,255,0.26)]",
+    Low: "bg-success/10 text-success border-success/24 shadow-[inset_0_1px_0_rgba(255,255,255,0.3)]",
   };
   return (
     <Badge variant="outline" className={cn("font-semibold tracking-wide", map[priority])}>
@@ -18,11 +18,11 @@ export function PriorityBadge({ priority }: { priority: Priority }) {
 
 export function StatusBadge({ status }: { status: Status }) {
   const map: Record<Status, string> = {
-    New: "bg-primary/10 text-primary border-primary/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.4)]",
+    New: "bg-primary/9 text-primary border-primary/24 shadow-[inset_0_1px_0_rgba(255,255,255,0.28)]",
     "In Progress":
-      "bg-amber-50/85 text-amber-700 border-amber-200/85 dark:bg-amber-200/12 dark:text-amber-100 dark:border-amber-200/24 shadow-[inset_0_1px_0_rgba(255,255,255,0.32)]",
+      "bg-warning/14 text-warning-foreground border-warning/28 shadow-[inset_0_1px_0_rgba(255,255,255,0.26)]",
     Resolved:
-      "bg-success/12 text-success border-success/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]",
+      "bg-success/10 text-success border-success/24 shadow-[inset_0_1px_0_rgba(255,255,255,0.3)]",
   };
   return (
     <Badge variant="outline" className={cn("font-semibold tracking-wide", map[status])}>

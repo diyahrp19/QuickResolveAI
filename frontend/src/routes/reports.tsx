@@ -76,21 +76,21 @@ function ReportsPage() {
 
   return (
     <AppShell>
-      <div className="space-y-6">
+      <div className="space-y-6 md:space-y-7">
         <div>
           <h1 className="font-display text-3xl md:text-4xl font-bold tracking-tight">Reports</h1>
-          <p className="text-muted-foreground mt-1.5 text-sm md:text-base">
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground md:text-base">
             Export complaint data and review summary insights.
           </p>
         </div>
 
-        <div className="relative overflow-hidden rounded-3xl border border-cyan-800/35 bg-linear-to-r from-sky-600/95 via-cyan-600/93 to-emerald-600/91 p-8 text-sky-50 shadow-glow">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_10%_20%,rgba(255,255,255,0.22),transparent_46%),radial-gradient(circle_at_90%_10%,rgba(255,255,255,0.14),transparent_40%)]" />
-          <div className="relative flex items-center gap-3 mb-4">
-            <TrendingUp className="h-6 w-6 text-cyan-100" />
+        <div className="relative overflow-hidden rounded-3xl surface-hero p-6 md:p-8 text-foreground">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_-10%_50%,color-mix(in_oklch,var(--color-primary)_20%,transparent),transparent_52%),radial-gradient(circle_at_110%_50%,color-mix(in_oklch,var(--color-accent)_20%,transparent),transparent_52%),radial-gradient(circle_at_50%_0%,color-mix(in_oklch,var(--color-primary)_10%,transparent),transparent_58%)]" />
+          <div className="relative mb-3 md:mb-4 flex items-center gap-3">
+            <TrendingUp className="h-6 w-6 text-primary" />
             <h2 className="font-display text-xl font-bold">Summary Report</h2>
           </div>
-          <div className="relative grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="relative grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             <Stat label="Total Complaints" value={total} />
             <Stat label="Resolved" value={resolved} />
             <Stat label="High Priority" value={high} />
@@ -101,7 +101,7 @@ function ReportsPage() {
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid md:grid-cols-2 gap-3 md:gap-4">
           <ExportCard
             title="Export as CSV"
             desc="Download all complaints as a comma-separated spreadsheet."
@@ -123,8 +123,8 @@ function ReportsPage() {
 function Stat({ label, value }: { label: string; value: string | number }) {
   return (
     <div>
-      <p className="text-xs uppercase tracking-[0.11em] text-sky-100/80">{label}</p>
-      <p className="font-display text-3xl font-bold mt-1 text-sky-50">{value}</p>
+      <p className="text-[11px] uppercase tracking-[0.09em] text-muted-foreground/90">{label}</p>
+      <p className="mt-1 font-display text-2xl md:text-3xl font-bold text-foreground">{value}</p>
     </div>
   );
 }
@@ -141,12 +141,12 @@ function ExportCard({
   onClick: () => void;
 }) {
   return (
-    <div className="rounded-3xl border border-border/75 bg-card/90 p-6 shadow-soft hover-lift surface-ring">
-      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-linear-to-br from-primary/20 to-accent/24 text-primary shadow-soft">
+    <div className="rounded-3xl surface-card p-5 md:p-6 hover-lift">
+      <div className="mb-3 md:mb-4 flex h-11 w-11 md:h-12 md:w-12 items-center justify-center rounded-2xl bg-linear-to-br from-primary/20 to-accent/24 text-primary shadow-soft">
         <Icon className="h-6 w-6" />
       </div>
-      <h3 className="font-display font-semibold text-lg tracking-tight">{title}</h3>
-      <p className="mt-1 mb-4 text-sm text-muted-foreground">{desc}</p>
+      <h3 className="font-display text-lg font-semibold tracking-tight">{title}</h3>
+      <p className="mt-1 mb-3 md:mb-4 text-sm text-muted-foreground">{desc}</p>
       <Button onClick={onClick} className="bg-gradient-primary hover:opacity-95">
         <Download className="h-4 w-4 mr-2" /> Download
       </Button>

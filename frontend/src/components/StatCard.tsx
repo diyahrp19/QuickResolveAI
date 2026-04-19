@@ -27,9 +27,9 @@ export function StatCard({ label, value, delta, icon: Icon, tone = "primary" }: 
   const animated = useAnimatedNumber(numericValue, 900);
 
   return (
-    <div className="group relative overflow-hidden rounded-3xl border border-border/80 glass-card p-6 shadow-soft hover-lift">
+    <div className="group relative overflow-hidden rounded-3xl surface-card p-6 hover-lift">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_90%_10%,color-mix(in_oklch,var(--color-primary)_18%,transparent),transparent_46%)] opacity-70" />
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-white/55 to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-white/35 to-transparent" />
       <div className="flex items-start justify-between">
         <div className="relative z-10">
           <p className="text-[11px] font-semibold uppercase tracking-[0.11em] text-muted-foreground">

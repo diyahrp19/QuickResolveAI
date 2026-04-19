@@ -60,16 +60,16 @@ function Dashboard() {
 
   return (
     <AppShell>
-      <div className="space-y-8 animate-enter">
+      <div className="space-y-6 md:space-y-7 animate-enter">
         <div>
           <p className="title-kicker">Control Center</p>
           <h1 className="font-display text-3xl md:text-4xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-muted-foreground mt-1.5 text-sm md:text-base">
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground md:text-base">
             QuickResolveAI – AI Powered Complaint Classification &amp; Resolution System
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 animate-stagger">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 animate-stagger">
           <StatCard
             label="Total Complaints"
             value={total}
@@ -94,7 +94,7 @@ function Dashboard() {
           <StatCard label="Pending" value={pending} delta="In queue" icon={Clock} tone="warning" />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 md:gap-4">
           <ChartCard title="Complaint Categories" subtitle="Distribution by type">
             <ResponsiveContainer width="100%" height={260}>
               <PieChart>
@@ -178,15 +178,15 @@ function Dashboard() {
           </ChartCard>
         </div>
 
-        <div className="rounded-3xl section-panel p-6 shadow-soft">
-          <h3 className="font-display text-lg font-semibold mb-4 tracking-tight">
+        <div className="rounded-3xl section-panel p-5 md:p-6 shadow-soft">
+          <h3 className="mb-3 font-display text-lg font-semibold tracking-tight">
             Recent Complaints
           </h3>
           <div className="space-y-3">
             {complaints.slice(0, 5).map((c, index) => (
               <div
                 key={c.id}
-                className="flex items-center gap-4 rounded-2xl border border-transparent p-3 hover:bg-secondary/55 hover:border-border/70 transition-all hover-lift"
+                className="flex items-center gap-3 md:gap-4 rounded-2xl border border-transparent p-2.5 md:p-3 hover:bg-secondary/55 hover:border-border/70 transition-all hover-lift"
               >
                 <div className="h-9 w-9 rounded-xl bg-linear-to-br from-primary/20 to-primary/8 text-primary flex items-center justify-center text-xs font-mono font-semibold surface-ring">
                   {index + 1}
@@ -227,10 +227,10 @@ function ChartCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-3xl section-panel p-6 shadow-soft hover-lift">
+    <div className="rounded-3xl section-panel p-5 md:p-6 shadow-soft hover-lift">
       <div className="mb-4">
         <h3 className="font-display text-base font-semibold tracking-tight">{title}</h3>
-        {subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}
+        {subtitle && <p className="mt-1 text-xs leading-5 text-muted-foreground">{subtitle}</p>}
       </div>
       {children}
     </div>

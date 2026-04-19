@@ -83,26 +83,26 @@ function SubmitPage() {
 
   return (
     <AppShell>
-      <div className="max-w-4xl mx-auto space-y-8">
+      <div className="mx-auto max-w-4xl space-y-6 md:space-y-8">
         <div>
           <p className="title-kicker">Intake</p>
           <h1 className="font-display text-3xl md:text-4xl font-bold tracking-tight">
             Submit Complaint
           </h1>
-          <p className="text-muted-foreground mt-1.5 text-sm md:text-base">
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground md:text-base">
             Our AI will instantly classify and recommend a resolution.
           </p>
         </div>
 
         <form
           onSubmit={onSubmit}
-          className="rounded-3xl section-panel border border-black/20 shadow-soft p-6 md:p-8 space-y-6"
+          className="rounded-3xl section-panel border border-black/20 shadow-soft p-5 md:p-8 space-y-5 md:space-y-6"
         >
-          <div className="grid md:grid-cols-2 gap-5">
+          <div className="grid gap-4 md:grid-cols-2 md:gap-5">
             <div className="space-y-2">
               <Label
                 htmlFor="customer"
-                className="text-xs uppercase tracking-[0.08em] text-muted-foreground"
+                className="text-xs uppercase tracking-[0.07em] text-muted-foreground"
               >
                 Customer name
               </Label>
@@ -114,7 +114,7 @@ function SubmitPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-xs uppercase tracking-[0.08em] text-muted-foreground">
+              <Label className="text-xs uppercase tracking-[0.07em] text-muted-foreground">
                 Source
               </Label>
               <Select value={source} onValueChange={(v) => setSource(v as Source)}>
@@ -133,7 +133,7 @@ function SubmitPage() {
           <div className="space-y-2">
             <Label
               htmlFor="text"
-              className="text-xs uppercase tracking-[0.08em] text-muted-foreground"
+              className="text-xs uppercase tracking-[0.07em] text-muted-foreground"
             >
               Complaint description
             </Label>
@@ -152,7 +152,7 @@ function SubmitPage() {
             />
           </div>
 
-          <div className="flex justify-end pt-1">
+          <div className="flex justify-end pt-0.5 md:pt-1">
             <Button
               type="submit"
               size="lg"
@@ -175,8 +175,8 @@ function SubmitPage() {
         </form>
 
         {result && (
-          <div className="rounded-3xl border border-black/20 bg-linear-to-br from-primary/10 via-card/85 to-transparent p-6 md:p-8 shadow-md animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="flex items-center gap-2 mb-5">
+          <div className="rounded-3xl border border-black/20 bg-linear-to-br from-primary/10 via-card/85 to-transparent p-5 md:p-8 shadow-md animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="mb-4 md:mb-5 flex items-center gap-2">
               <div className="h-10 w-10 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-glow">
                 <Sparkles className="h-4 w-4 text-primary-foreground" />
               </div>
@@ -186,13 +186,13 @@ function SubmitPage() {
               </div>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid gap-3 md:grid-cols-3 md:gap-4">
               <InfoTile
                 icon={<Tag className="h-4 w-4" />}
                 label="Category"
                 value={result.category}
               />
-              <div className="rounded-2xl bg-card/80 border border-black/20 p-4 shadow-soft">
+              <div className="rounded-2xl bg-card/80 border border-black/20 p-3.5 md:p-4 shadow-soft">
                 <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
                   <Sparkles className="h-4 w-4" /> Priority
                 </div>
@@ -225,7 +225,7 @@ function InfoTile({
 }) {
   return (
     <div
-      className={`rounded-2xl bg-card/80 border border-black/20 p-4 shadow-soft ${className ?? ""}`}
+      className={`rounded-2xl bg-card/80 border border-black/20 p-3.5 md:p-4 shadow-soft ${className ?? ""}`}
     >
       <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
         {icon} {label}

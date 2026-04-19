@@ -67,13 +67,13 @@ function ComplaintsPage() {
           <h1 className="font-display text-3xl md:text-4xl font-bold tracking-tight">
             Complaint Management
           </h1>
-          <p className="text-muted-foreground mt-1.5 text-sm md:text-base">
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground md:text-base">
             Search, filter and manage all incoming complaints.
           </p>
         </div>
 
-        <div className="rounded-3xl section-panel p-4 shadow-soft surface-ring">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
+        <div className="rounded-3xl section-panel p-3 md:p-4 shadow-soft surface-ring">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-2.5 md:gap-3">
             <div className="md:col-span-5 relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
@@ -104,10 +104,10 @@ function ComplaintsPage() {
           </div>
         </div>
 
-        <div className="rounded-3xl section-panel shadow-soft overflow-hidden surface-ring">
+        <div className="rounded-2xl md:rounded-3xl section-panel shadow-soft overflow-hidden surface-ring">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="sticky top-0 z-10 bg-secondary/78 backdrop-blur-lg text-xs uppercase tracking-[0.11em] text-muted-foreground">
+              <thead className="sticky top-0 z-10 bg-secondary/78 text-xs uppercase tracking-[0.09em] text-muted-foreground backdrop-blur-lg">
                 <tr>
                   <Th>S.No</Th>
                   <Th>Complaint</Th>
@@ -122,22 +122,26 @@ function ComplaintsPage() {
                 {filtered.map((c, index) => (
                   <tr
                     key={c.id}
-                    className="border-t border-border/75 hover:bg-secondary/48 transition-all"
+                    className="border-t border-border/75 even:bg-secondary/20 hover:bg-secondary/48 transition-all"
                   >
-                    <td className="px-4 py-3 font-mono text-xs font-semibold text-primary">
+                    <td className="px-3 py-2.5 md:px-4 md:py-3 font-mono text-xs font-semibold text-primary">
                       {index + 1}
                     </td>
-                    <td className="px-4 py-3 max-w-xs truncate font-medium">{c.text}</td>
-                    <td className="px-4 py-3 text-muted-foreground">{c.category}</td>
-                    <td className="px-4 py-3">
+                    <td className="px-3 py-2.5 md:px-4 md:py-3 max-w-xs truncate font-medium">
+                      {c.text}
+                    </td>
+                    <td className="px-3 py-2.5 md:px-4 md:py-3 text-muted-foreground">
+                      {c.category}
+                    </td>
+                    <td className="px-3 py-2.5 md:px-4 md:py-3">
                       <PriorityBadge priority={c.priority} />
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-3 py-2.5 md:px-4 md:py-3">
                       <Select
                         value={c.status}
                         onValueChange={(v) => complaintsStore.updateStatus(c.id, v as Status)}
                       >
-                        <SelectTrigger className="h-9 w-36 rounded-xl bg-card/60">
+                        <SelectTrigger className="h-8 w-32 md:h-9 md:w-36 rounded-xl bg-card/60">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -147,14 +151,14 @@ function ComplaintsPage() {
                         </SelectContent>
                       </Select>
                     </td>
-                    <td className="px-4 py-3 text-muted-foreground text-xs">
+                    <td className="px-3 py-2.5 md:px-4 md:py-3 text-muted-foreground text-xs">
                       {new Date(c.createdAt).toLocaleDateString()}
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-3 py-2.5 md:px-4 md:py-3 text-right">
                       <div className="inline-flex items-center gap-2">
                         <button
                           onClick={() => setActive(c)}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border/80 bg-card/75 hover:bg-accent text-xs font-semibold transition-all hover:-translate-y-px button-glow"
+                          className="inline-flex items-center gap-1.5 px-2.5 md:px-3 py-1.5 rounded-xl border border-border/80 bg-card/75 hover:bg-accent text-xs font-semibold transition-all hover:-translate-y-px button-glow"
                         >
                           <Eye className="h-3.5 w-3.5" /> View
                         </button>
@@ -162,7 +166,7 @@ function ComplaintsPage() {
                           onClick={() => setDeleteTarget(c)}
                           aria-label={`Delete complaint ${c.id}`}
                           title="Delete"
-                          className="inline-flex items-center justify-center h-8 w-8 rounded-xl border border-destructive/20 bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all hover:-translate-y-px"
+                          className="inline-flex items-center justify-center h-7 w-7 md:h-8 md:w-8 rounded-xl border border-destructive/20 bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all hover:-translate-y-px"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </button>
@@ -194,7 +198,11 @@ function ComplaintsPage() {
 }
 
 function Th({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <th className={`px-4 py-3 text-left font-semibold ${className}`}>{children}</th>;
+  return (
+    <th className={`px-3 py-2.5 md:px-4 md:py-3 text-left font-semibold ${className}`}>
+      {children}
+    </th>
+  );
 }
 
 function Filter({
