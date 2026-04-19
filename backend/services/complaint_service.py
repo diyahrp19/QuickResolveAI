@@ -1,22 +1,6 @@
-"""
-Complaint processing service with placeholder logic.
-This service can be extended with AI classification later.
-"""
-
 
 def process_complaint(text: str) -> dict:
-    """
-    Process complaint text and return classification results.
-    
-    Current implementation uses rule-based logic as placeholder.
-    This function can be replaced with AI/ML classification later.
-    
-    Args:
-        text: Complaint text to process
-        
-    Returns:
-        dict: Contains category, priority, and recommendation
-    """
+
     text_lower = text.lower()
     
     category = classify_category(text_lower)
@@ -33,14 +17,7 @@ def process_complaint(text: str) -> dict:
 
 
 def classify_category(text: str) -> str:
-    """
-    Classify complaint into category using rule-based logic.
-    
-    Categories:
-    - Product Issue: Defective, not working, faulty, broken (product itself)
-    - Packaging Issue: Leak, damaged, torn, broken (packaging/delivery)
-    - Trade Inquiry: Distributor, wholesale, bulk order, reseller
-    """
+
     trade_keywords = ["distributor", "wholesale", "bulk order", "reseller", "retailer", "supplier", "vendor"]
     if any(keyword in text for keyword in trade_keywords):
         return "Trade Inquiry"
@@ -57,14 +34,7 @@ def classify_category(text: str) -> str:
 
 
 def classify_priority(text: str) -> str:
-    """
-    Classify complaint priority using rule-based logic.
-    
-    Priority levels:
-    - High: Safety issues, damaged product, critical malfunction
-    - Medium: Inconvenience, wrong item, partial issues
-    - Low: General inquiry, minor concerns
-    """
+
     text_lower = text.lower()
     
     high_keywords = ["safety", "damaged", "leak", "dangerous", "critical", "urgent", "emergency", "broken", "defective"]
