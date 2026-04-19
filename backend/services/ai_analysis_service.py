@@ -36,13 +36,6 @@ TRADE_KEYWORDS = {
 
 SPAM_KEYWORDS = {
     "spam",
-    "test",
-    "testing",
-    "hello",
-    "hi",
-    "random",
-    "fun",
-    "joke",
     "just checking",
     "asdf",
     "qwerty",
@@ -66,14 +59,23 @@ PACKAGING_KEYWORDS = {
     "spilled",
     "spill",
     "packaging",
+    "outer packaging",
     "package",
     "box",
+    "parcel",
     "carton",
     "seal",
+    "seal broken",
     "cap",
+    "cap seal",
     "damaged box",
+    "wet",
+    "dented",
     "crushed",
     "torn",
+    "scratched",
+    "missing padding",
+    "padding",
     "delivery damaged",
 }
 
@@ -86,7 +88,18 @@ PRODUCT_KEYWORDS = {
     "broken",
     "burnt",
     "smells burnt",
+    "burning smell",
     "does not start",
+    "not charging",
+    "cooling very poorly",
+    "cooling poorly",
+    "abnormal noise",
+    "loud abnormal noise",
+    "loud noise",
+    "motor",
+    "broke",
+    "strap broke",
+    "watch strap",
     "wrong item",
     "wrong variant",
     "wrong color",
@@ -104,9 +117,12 @@ HIGH_PRIORITY_KEYWORDS = {
     "spilled",
     "burnt",
     "smells burnt",
+    "burning smell",
     "stopped working",
     "not working",
+    "not charging",
     "broken",
+    "broke",
     "defective",
 }
 
@@ -354,8 +370,11 @@ def _blend_analysis(
 
     ai_priority = ai_result["priority"] if ai_result is not None else fallback_result["priority"]
     fallback_priority = fallback_result["priority"]
-    chosen_priority = _max_priority(text_priority, fallback_priority)
-    chosen_priority = _max_priority(chosen_priority, ai_priority)
+    chosen_priority = text_priority
+
+    # Use AI/fallback only as consensus fallback when text signal is weak.
+    if text_priority == "Low" and ai_priority == fallback_priority and ai_priority in {"Medium", "High"}:
+        chosen_priority = ai_priority
 
     recommendation = ""
     if ai_result is not None:
@@ -379,8 +398,30 @@ def _infer_category_from_text(text: str) -> tuple[str, int]:
     packaging_score = _keyword_score(value, PACKAGING_KEYWORDS)
     product_score = _keyword_score(value, PRODUCT_KEYWORDS)
 
+    # If packaging is explicitly fine/safe, treat product-failure signals as authoritative.
+    if product_score > 0 and _contains_any(
+        value,
+        {
+            "package arrived safely",
+            "package arrived safe",
+            "packaging arrived safely",
+            "packaging was fine",
+            "the package is fine",
+            "the package was fine",
+            "case is fine",
+            "product is okay",
+            "product is ok",
+            "product inside still works",
+        },
+    ):
+        return "Product Issue", product_score
+
+    # Require stronger evidence before labeling as spam.
+    strongest_legit_signal = max(trade_score, packaging_score, product_score)
+    if spam_score >= 3 and spam_score >= strongest_legit_signal + 1:
+        return "Spam", spam_score
+
     scores = {
-        "Spam": spam_score,
         "Trade Inquiry": trade_score,
         "Packaging Issue": packaging_score,
         "Product Issue": product_score,
@@ -412,11 +453,27 @@ def _infer_priority_from_text(text: str, category: str) -> str:
     if category == "Packaging Issue":
         if _contains_any(value, {"leak", "leaking", "spilled", "crushed", "torn", "broken"}):
             return "High"
+        if _contains_any(value, {"damaged", "wet", "scratched", "old", "dented", "missing padding", "padding"}):
+            return "Medium"
         if has_minor_context or _contains_any(value, {"dent", "dented", "slightly", "minor"}):
             return "Medium"
 
     if category == "Product Issue":
-        if _contains_any(value, {"stopped working", "not working", "defective", "burnt", "broken"}):
+        if _contains_any(
+            value,
+            {
+                "stopped working",
+                "not working",
+                "not charging",
+                "defective",
+                "burnt",
+                "burning smell",
+                "broken",
+                "broke",
+                "abnormal noise",
+                "loud abnormal noise",
+            },
+        ):
             return "High"
         if _contains_any(
             value,
@@ -457,10 +514,18 @@ def _contains_any(text: str, keywords: set[str]) -> bool:
 
 
 def _spam_score(text: str) -> int:
-    score = _keyword_score(text, SPAM_KEYWORDS)
+    matched_spam_keywords = sum(1 for kw in SPAM_KEYWORDS if kw in text)
+    score = matched_spam_keywords * 2
 
     words = [w for w in text.split() if w]
-    if len(words) <= 2:
+    low_information_message = len(words) <= 3
+
+    if matched_spam_keywords > 0 and low_information_message:
+        score += 1
+
+    if len(words) <= 2 and not _contains_any(
+        text, TRADE_KEYWORDS | PACKAGING_KEYWORDS | PRODUCT_KEYWORDS
+    ):
         score += 1
 
     # Repeated single characters like "aaaa" or numeric noise look suspicious.
