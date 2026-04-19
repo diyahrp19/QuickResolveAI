@@ -1,9 +1,3 @@
-"""AI-powered complaint analysis service.
-
-This module provides a structured analysis function that can use OpenAI or Gemini,
-with safe normalization to always return valid category/priority values.
-"""
-
 import json
 import os
 from typing import Any
